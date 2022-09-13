@@ -19,6 +19,7 @@
   ],
   "author": "Lajos Bencz",
   "license": "MIT",
+  "repository": "https://github.com/lajosbencz/wampc",
   "main": "dist/cjs/wampc/index.js",
   "module": "dist/mjs/wampc/index.js",
   "typings": "dist/ts/wampc/index.d.ts",
