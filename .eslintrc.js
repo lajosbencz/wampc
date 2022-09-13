@@ -17,6 +17,6 @@ module.exports = {
     project: ['./tsconfig.json']
   },
   rules: {
-    "prefer-promise-reject-errors": false
+    "prefer-promise-reject-errors": 0
   }
 }

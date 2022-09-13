@@ -15,7 +15,7 @@ describe('testing utils', () => {
         const c = asCancelablePromise(p)
         c.cancel()
         try {
-            const res = await c.promise
+            await c.promise
         } catch (err: any) {
             erred = true
             expect(err.isCanceled).toBe(true)
