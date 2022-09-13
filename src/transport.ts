@@ -1,9 +1,9 @@
-import { Deferred } from "es6-deferred-promise"
-import { Message } from "./message"
-import { ProtocolType } from "./protocol"
+import {Deferred} from "es6-deferred-promise"
+import {Message} from "./message"
+import {ProtocolType} from "./protocol"
 import Serializer from "./serializer"
 import JsonSerializer from "./serializer/json"
-import { ArrayOrObject } from "./types"
+import {ArrayOrObject} from "./types"
 
 export enum TransportType {
     WebSocket = 'websocket',
@@ -18,9 +18,14 @@ export interface Transporter {
     send: (data: ArrayOrObject) => void
 }
 
-export class TransportOptions {
-    public url: string = ''
-    public protocols: ProtocolType[] = [ProtocolType.Wamp2Json]
+export interface TransportOptions {
+    url: string
+    protocols?: ProtocolType[]
+}
+
+export const TransportOptionsDefaults = {
+    url: '',
+    protocols: [ProtocolType.Wamp2Json],
 }
 
 export abstract class Transport {
@@ -28,6 +33,7 @@ export abstract class Transport {
     protected _serializer: Serializer
     protected _deferred_open: Deferred<any>
     protected _deferred_close?: Deferred<any>
+
     constructor(options: TransportOptions) {
         this._options = options
         this._serializer = JsonSerializer

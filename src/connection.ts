@@ -1,10 +1,36 @@
-import { Deferred } from "es6-deferred-promise"
+import {Deferred} from "es6-deferred-promise"
 import Client from "./client"
 import Features from "./features"
-import { AbortMessage, AuthenticateMessage, CallMessage, CancelMessage, ChallengeMessage, ErrorMessage, EventMessage, GoodbyeMessage, HelloMessage, InvocationMessage, Message, MessageType, PublishedMessage, PublishMessage, RegisteredMessage, RegisterMessage, ResultMessage, SubscribedMessage, SubscribeMessage, UnregisteredMessage, UnregisterMessage, UnsubscribedMessage, UnsubscribeMessage, WelcomeMessage, YieldMessage } from "./message"
-import { asCancelablePromise, asPromise } from "./util"
-import { ProtocolType } from "./protocol"
-import { Transporter, TransportOptions } from "./transport"
+import {
+    AbortMessage,
+    AuthenticateMessage,
+    CallMessage,
+    CancelMessage,
+    ChallengeMessage,
+    ErrorMessage,
+    EventMessage,
+    GoodbyeMessage,
+    HelloMessage,
+    InvocationMessage,
+    Message,
+    MessageType,
+    PublishedMessage,
+    PublishMessage,
+    RegisteredMessage,
+    RegisterMessage,
+    ResultMessage,
+    SubscribedMessage,
+    SubscribeMessage,
+    UnregisteredMessage,
+    UnregisterMessage,
+    UnsubscribedMessage,
+    UnsubscribeMessage,
+    WelcomeMessage,
+    YieldMessage
+} from "./message"
+import {asCancelablePromise, asPromise} from "./util"
+import {ProtocolType} from "./protocol"
+import {Transporter, TransportOptions, TransportOptionsDefaults} from "./transport"
 import {Args, KwArgs, TodoType} from "./types"
 import Result from "./wamp/result"
 import Session from "./wamp/session"
@@ -17,7 +43,7 @@ import WampInvocation from "./wamp/invocation"
 
 
 export async function transportFromUri(uri: string, opts?: TransportOptions): Promise<Transporter> {
-    opts = opts ?? new TransportOptions()
+    opts = opts ?? TransportOptionsDefaults
     opts.url = uri
     let scheme = 'ws'
     if (uri.match(/^[a-z0-9]+:\/\//i) != null) {
@@ -41,13 +67,19 @@ export async function transportFromUri(uri: string, opts?: TransportOptions): Pr
     return new T(opts)
 }
 
-class Options {
-    protocols: ProtocolType[] = [ProtocolType.Wamp2Json]
-    authid: string = 'anonumous'
-    authmethods: string[] = ['anonymous']
+export interface Options {
+    protocols?: ProtocolType[]
+    authid?: string
+    authmethods?: string[]
     onchallenge?: (...args: any) => any
-    caller_disclose_me: boolean = true
-    publisher_disclose_me: boolean = true
+    caller_disclose_me?: boolean
+    publisher_disclose_me?: boolean
+}
+
+export const OptionsDefaults = {
+    protocols: [ProtocolType.Wamp2Json],
+    caller_disclose_me: true,
+    publisher_disclose_me: true,
 }
 
 export default class Connection {
@@ -71,12 +103,13 @@ export default class Connection {
     protected _subscriptions: Map<number, TodoType> = new Map()
     protected _registrations: Map<number, TodoType> = new Map()
     protected _deferred_leave?: Deferred<any>
+
     // protected _registered_reqs: any[] = []
 
     constructor(client: Client, url: string, realm: string, options?: Options) {
         this._client = client
         this._url = url
-        this._options = options ?? new Options()
+        this._options = Object.assign({}, OptionsDefaults, options ?? {})
         this._deferred_session = new Deferred<Session>()
         this._session = new Session(realm, -1)
     }
@@ -86,7 +119,7 @@ export default class Connection {
     }
 
     public get transport(): Transporter {
-        if(this._transport == null) {
+        if (this._transport == null) {
             throw new Error('transport unavailable')
         }
         return this._transport
@@ -158,17 +191,16 @@ export default class Connection {
                     authMsg = new AuthenticateMessage(signature[0], signature[1])
                 }
                 this.send(authMsg)
-            }
-            catch (e) {
+            } catch (e) {
                 console.error("onchallenge() raised: ", e)
-                const aborMsg = new AbortMessage({ message: "sorry, I cannot authenticate (onchallenge handler raised an exception)" }, "wamp.error.cannot_authenticate")
+                const aborMsg = new AbortMessage({message: "sorry, I cannot authenticate (onchallenge handler raised an exception)"}, "wamp.error.cannot_authenticate")
                 this.send(aborMsg)
                 await this.close(3000, '')
             }
         } else {
             const err = new Error("received WAMP challenge, but no onchallenge() handler set")
             console.error(err)
-            this.send(new AbortMessage({ message: "sorry, I cannot authenticate (no onchallenge handler set)" }, "wamp.error.cannot_authenticate"))
+            this.send(new AbortMessage({message: "sorry, I cannot authenticate (no onchallenge handler set)"}, "wamp.error.cannot_authenticate"))
             await this.close(3000, '')
         }
     }
@@ -184,7 +216,7 @@ export default class Connection {
     }
 
     protected _processError(msg: ErrorMessage): void {
-        let reqs:Map<number, any>
+        let reqs: Map<number, any>
         switch (msg.error_type) {
             case MessageType.SUBSCRIBE:
                 reqs = this._subscribe_reqs
@@ -266,7 +298,7 @@ export default class Connection {
     }
 
     protected _processUnsubscribed(msg: UnsubscribedMessage): void {
-        const requestId:number = msg.request_id
+        const requestId: number = msg.request_id
         if (this._unsubscribe_reqs.has(requestId)) {
             const [d, subscriptionId] = this._unsubscribe_reqs.get(requestId)
             if (this._subscriptions.has(subscriptionId)) {
@@ -285,7 +317,7 @@ export default class Connection {
                 console.warn('router actively revoked our subscription')
                 const details = msg.details
                 if (details != null) {
-                    const subscriptionId:number = details.subscription as number
+                    const subscriptionId: number = details.subscription as number
                     const reason = details.reason
                     if (this._subscriptions.has(subscriptionId)) {
                         const subs = this._subscriptions.get(subscriptionId)
@@ -338,8 +370,7 @@ export default class Connection {
                 const sub = subs[i]
                 try {
                     sub.handler(args, kwArgs, evt, sub)
-                }
-                catch (e) {
+                } catch (e) {
                     console.error(e)
                 }
             }
@@ -378,7 +409,7 @@ export default class Connection {
                 console.warn('router actively revoked our registration')
                 const details = msg.details
                 if (details != null) {
-                    const registrationId:number = details.registration as number
+                    const registrationId: number = details.registration as number
                     // const reason = details.reason
                     if (this._registrations.has(registrationId)) {
                         const registration = this._registrations.get(registrationId)
@@ -406,7 +437,7 @@ export default class Connection {
             let progress = null
             if (details?.receive_progress === true) {
                 progress = (args?: Args, kwArgs?: KwArgs) => {
-                    const msgYield = new YieldMessage(requestId, { progress: true }, args, kwArgs)
+                    const msgYield = new YieldMessage(requestId, {progress: true}, args, kwArgs)
                     this.send(msgYield)
                 }
             }
@@ -530,9 +561,10 @@ export default class Connection {
 
     public async open(): Promise<Event> {
         this._joined = false
-        const transportOptions = new TransportOptions()
-        transportOptions.url = this._url
-        transportOptions.protocols = this._options?.protocols ?? [ProtocolType.Wamp2Json]
+        const transportOptions = Object.assign({}, TransportOptionsDefaults, {
+            url: this._url,
+            protocols: this._options?.protocols
+        })
         this._transport = await transportFromUri(transportOptions.url, transportOptions)
         this._transport.onMessage = async (msg: Message) => {
             console.log(msg)

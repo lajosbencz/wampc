@@ -1,34 +1,42 @@
-import Connection, { ConnectionOptions } from "./connection"
-import { ProtocolType } from "./protocol"
-import { SerializerType } from "./serializer"
-import { Args, KwArgs, TodoType } from "./types"
+import Connection, {Options as ConnectionOptions, OptionsDefaults as ConnectionOptionsDefaults} from "./connection"
+import {ProtocolType} from "./protocol"
+import {SerializerType} from "./serializer"
+import {Args, KwArgs, TodoType} from "./types"
 import Publication from "./wamp/publication"
 import Registration from "./wamp/registration"
 import Result from "./wamp/result"
 import Session from "./wamp/session"
 import Subscription from "./wamp/subscription"
 
-export class ClientOptions {
-    serializers: SerializerType[] = [SerializerType.Json]
-    authid: string = 'anonymous'
-    authmethods: string[] = ['anonymous']
+export interface Options {
+    serializers?: SerializerType[]
+    authid?: string
+    authmethods?: string[]
     onchallenge?: (...args: any) => any
+}
+
+export const OptionsDefaults = {
+    serializers: [SerializerType.Json],
+    authid: 'anonymous',
+    authmethods: ['anonymous'],
 }
 
 export default class Client {
     protected _connection: Connection
 
-    public onJoin: (details: KwArgs) => void = () => { }
-    public onLeave: (reason: string, details: KwArgs) => void = () => { }
+    public onJoin: (details: KwArgs) => void = () => {
+    }
+    public onLeave: (reason: string, details: KwArgs) => void = () => {
+    }
 
-    constructor(url: string, realm: string, options?: ClientOptions) {
-        options = options ?? new ClientOptions()
-
-        const connectionOptions = new ConnectionOptions()
-        connectionOptions.authid = options.authid
-        connectionOptions.authmethods = options.authmethods
-        connectionOptions.protocols = options.serializers.map(s => ('wamp.2.' + s) as ProtocolType)
-        connectionOptions.onchallenge = options.onchallenge
+    constructor(url: string, realm: string, options?: Options) {
+        options = Object.assign({}, OptionsDefaults, options ?? {})
+        const connectionOptions:ConnectionOptions = Object.assign({}, ConnectionOptionsDefaults, {
+            authid: options.authid,
+            authmethods: options.authmethods,
+            protocols: (options.serializers as SerializerType[]).map(s => ('wamp.2.' + s) as ProtocolType),
+            onchallenge: options.onchallenge,
+        })
         this._connection = new Connection(this, url, realm, connectionOptions)
     }
 

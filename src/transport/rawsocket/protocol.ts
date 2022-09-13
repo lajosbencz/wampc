@@ -1,7 +1,7 @@
 import EventEmitter from "events"
-import { SerializerType } from "../../serializer"
-import { Nullable } from "../../types"
-import { Socket } from 'net'
+import {SerializerType} from "../../serializer"
+import {Nullable} from "../../types"
+import {Socket} from 'net'
 
 export enum ProtocolStatus {
     CLOSED = -1,
@@ -35,17 +35,28 @@ export enum ProtocolMessageTypes {
     PONG = 0x2,
 }
 
-export class ProtocolOptions {
-    fail_on_ping_timeout: boolean = true
-    strict_pong: boolean = true
-    ping_timeout: number = 2000
-    autoping: number = 0
-    max_len_exp: number = 24
-    serializer: SerializerType = SerializerType.Json
-    packet_timeout: number = 2000
+export interface ProtocolOptions {
+    fail_on_ping_timeout?: boolean
+    strict_pong?: boolean
+    ping_timeout?: number
+    autoping?: number
+    max_len_exp?: number
+    serializer?: SerializerType
+    packet_timeout?: number
 }
 
-export class ProtocolError extends Error { }
+export const ProtocolOptionsDefaults = {
+    fail_on_ping_timeout: true,
+    strict_pong: true,
+    ping_timeout: 2000,
+    autoping: 0,
+    max_len_exp: 24,
+    serializer: SerializerType.Json,
+    packet_timeout: 2000,
+}
+
+export class ProtocolError extends Error {
+}
 
 export class Protocol {
     protected _options: ProtocolOptions
@@ -63,10 +74,7 @@ export class Protocol {
     protected _peer_max_len_exp: number = 0
 
     constructor(stream: Socket, options?: ProtocolOptions) {
-        this._options = Object.assign(
-            new ProtocolOptions(),
-            options ?? {}
-        )
+        this._options = Object.assign({}, ProtocolOptionsDefaults, options ?? {})
         this._stream = stream
         this._emitter = new EventEmitter()
         this._buffer = Buffer.alloc(4)
@@ -83,13 +91,13 @@ export class Protocol {
 
         const proxyEvents = ['close', 'drain', 'end', 'error', 'timeout']
         proxyEvents.forEach((evt) => {
-            this._stream.on(evt, (data:any) => {
+            this._stream.on(evt, (data: any) => {
                 this._emitter.emit(evt, data)
             })
         })
 
 
-        const serializerType = this._options.serializer
+        const serializerType = this._options.serializer as SerializerType
         const protocolSerializer = ProtocolSerializer[serializerType]
         if (protocolSerializer === undefined) throw new Error('invalid serializer for rawsocket: ' + serializerType)
     }
@@ -138,7 +146,7 @@ export class Protocol {
     }
 
     protected setupPingTimeout(): void {
-        if (this._options.ping_timeout > 0) {
+        if (this._options.ping_timeout !== undefined && this._options.ping_timeout > 0) {
             this._ping_timeout = setTimeout(
                 this.onPingTimeout.bind(this),
                 this._options.ping_timeout
@@ -155,7 +163,7 @@ export class Protocol {
 
     protected setupAutoPing(): void {
         this.clearAutoPing()
-        if (this._options.autoping > 0) {
+        if (this._options.autoping !== undefined && this._options.autoping > 0) {
             this._autoping_interval = setInterval(
                 this.ping.bind(this),
                 this._options.autoping
@@ -179,7 +187,7 @@ export class Protocol {
 
     protected read(data: any): void {
         let handler: any = null;
-            let frame: number = -1
+        let frame: number = -1
         switch (this._status) {
             case ProtocolStatus.CLOSED:
             case ProtocolStatus.UNINITIATED:
@@ -246,7 +254,7 @@ export class Protocol {
         // Protocol magic byte
         gday.writeUInt8(ProtocolMagicByte, 0)
         // Announce message max length and serializer
-        gday.writeUInt8(((this._options.max_len_exp - 9) << 4) | ProtocolSerializer[this._options.serializer], 1)
+        gday.writeUInt8((((this._options.max_len_exp as number) - 9) << 4) | ProtocolSerializer[this._options.serializer as SerializerType], 1)
         // Reserved bytes
         gday.writeUInt8(0x00, 2)
         gday.writeUInt8(0x00, 3)
@@ -266,7 +274,7 @@ export class Protocol {
         // Push the data to the buffer
         data.copy(this._buffer, this._bufferLen)
         // If there still isn't enough data, increment the counter and return null
-        const dataLen:number = data.length
+        const dataLen: number = data.length
         if ((this._bufferLen + dataLen) < len) {
             this._bufferLen += dataLen
             return null
