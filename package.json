@@ -19,9 +19,9 @@
   ],
   "author": "Lajos Bencz",
   "license": "MIT",
-  "main": "dist/cjs/index.js",
-  "module": "dist/mjs/index.mjs",
-  "typings": "dist/ts/index.d.ts",
+  "main": "dist/cjs/wampc/index.js",
+  "module": "dist/mjs/wampc/index.js",
+  "typings": "dist/ts/wampc/index.d.ts",
   "files": [
     "dist"
   ],
