@@ -1,13 +1,13 @@
 import Message, { MessageType } from '../message'
 import { MessageAppendArgsKwArgs } from '../message'
-import { KwArgs } from '../../types'
+import {Args, KwArgs} from '../../types'
 
 export default class EventMessage extends Message {
     constructor(
         subscriptionId: number,
         publicationId: number,
         details: KwArgs,
-        args?: any[],
+        args?: Args,
         kwArgs?: KwArgs
     ) {
         super(
@@ -32,7 +32,7 @@ export default class EventMessage extends Message {
         return this._args[2]
     }
 
-    public get args(): any[] {
+    public get args(): Args {
         return this._args[3]
     }
 

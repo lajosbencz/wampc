@@ -7,7 +7,7 @@ export default class PublishMessage extends Message {
         requestId: number,
         options: KwArgs,
         topic: string,
-        args?: any[],
+        args?: Args,
         kwArgs?: KwArgs
     ) {
         super(MessageType.PUBLISH, requestId, options, topic, args, kwArgs)
