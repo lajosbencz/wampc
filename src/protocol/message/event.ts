@@ -1,6 +1,6 @@
 import Message, { MessageType } from '../message'
 import { MessageAppendArgsKwArgs } from '../message'
-import {Args, KwArgs} from '../../types'
+import { Args, KwArgs } from '../../types'
 
 export default class EventMessage extends Message {
     constructor(

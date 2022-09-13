@@ -1,6 +1,6 @@
 import Connection from '../connection'
-import {Args, KwArgs} from '../types'
-import {Deferred} from "es6-deferred-promise";
+import { Args, KwArgs } from '../types'
+import { Deferred } from 'es6-deferred-promise'
 
 export default class Subscription {
     topic: any

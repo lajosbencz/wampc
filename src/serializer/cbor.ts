@@ -10,8 +10,7 @@ export class CborSerializer implements Serializer {
         try {
             // @ts-ignore
             return encode(obj)
-        }
-        catch(e) {
+        } catch (e) {
             console.error('Cbor encoding error', e)
             throw e
         }
@@ -20,8 +19,7 @@ export class CborSerializer implements Serializer {
     unserialize(payload: string): ArrayOrObject {
         try {
             return decode(Buffer.from(payload))
-        }
-        catch(e) {
+        } catch (e) {
             console.error('Cbor decoding error', e)
             throw e
         }

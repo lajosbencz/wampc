@@ -382,8 +382,9 @@ export default class Connection {
                         details.subscription as number
                     const reason = details.reason
                     if (this._subscriptions.has(subscriptionId)) {
-                        const subs = this._subscriptions.get(subscriptionId) ?? []
-                        for(const sub of subs) {
+                        const subs =
+                            this._subscriptions.get(subscriptionId) ?? []
+                        for (const sub of subs) {
                             sub.active = false
                             sub.resolve(reason)
                         }
@@ -492,8 +493,9 @@ export default class Connection {
                         details.registration as number
                     const reason = details.reason
                     if (this._registrations.has(registrationId)) {
-                        const registration =
-                            this._registrations.get(registrationId) as Registration
+                        const registration = this._registrations.get(
+                            registrationId
+                        ) as Registration
                         registration.active = false
                         registration.resolve(reason)
                         this._registrations.delete(registrationId)
