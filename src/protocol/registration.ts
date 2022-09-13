@@ -1,6 +1,7 @@
 import Connection from '../connection'
 import { Args, KwArgs } from '../types'
 import Result from './result'
+import {Deferred} from "es6-deferred-promise";
 
 export default class Registration {
     procedure: string = ''
@@ -9,6 +10,8 @@ export default class Registration {
     connection: Connection
     id: number = 0
     active: boolean = true
+
+    protected _on_unregister: Deferred<any> = new Deferred<any>()
 
     constructor(
         procedure: string,
@@ -23,6 +26,14 @@ export default class Registration {
         this.connection = connection
         this.id = id
         this.active = true
+    }
+
+    public get on_unregister(): Promise<any> {
+        return this._on_unregister.promise
+    }
+
+    public resolve(reason?: any) {
+        this._on_unregister.resolve(reason)
     }
 
     async unregister(): Promise<void> {

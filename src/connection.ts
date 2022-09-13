@@ -105,11 +105,9 @@ export default class Connection {
     protected _register_reqs: Map<number, TodoType> = new Map()
     protected _unregister_reqs: Map<number, TodoType> = new Map()
     protected _call_reqs: Map<number, TodoType> = new Map()
-    protected _subscriptions: Map<number, TodoType> = new Map()
-    protected _registrations: Map<number, TodoType> = new Map()
+    protected _subscriptions: Map<number, Subscription[]> = new Map()
+    protected _registrations: Map<number, Registration> = new Map()
     protected _deferred_leave?: Deferred<any>
-
-    // protected _registered_reqs: any[] = []
 
     constructor(
         client: Client,
@@ -350,7 +348,7 @@ export default class Connection {
                 this,
                 subscriptionId
             )
-            this._subscriptions.get(subscriptionId).push(sub)
+            this._subscriptions.get(subscriptionId)?.push(sub)
             d.resolve(sub)
             this._subscribe_reqs.delete(requestId)
         } else {
@@ -365,10 +363,10 @@ export default class Connection {
         if (this._unsubscribe_reqs.has(requestId)) {
             const [d, subscriptionId] = this._unsubscribe_reqs.get(requestId)
             if (this._subscriptions.has(subscriptionId)) {
-                const subs = this._subscriptions.get(subscriptionId)
-                for (let i = 0; i < subs.length; i++) {
-                    subs[i].active = false
-                    // subs[i]._on_unsubscribe.resolve()
+                const subs = this._subscriptions.get(subscriptionId) ?? []
+                for (const sub of subs) {
+                    sub.active = false
+                    sub.resolve()
                 }
                 this._subscriptions.delete(subscriptionId)
             }
@@ -384,10 +382,10 @@ export default class Connection {
                         details.subscription as number
                     const reason = details.reason
                     if (this._subscriptions.has(subscriptionId)) {
-                        const subs = this._subscriptions.get(subscriptionId)
-                        for (let i = 0; i < subs.length; ++i) {
-                            subs[i].active = false
-                            subs[i]._on_unsubscribe.resolve(reason)
+                        const subs = this._subscriptions.get(subscriptionId) ?? []
+                        for(const sub of subs) {
+                            sub.active = false
+                            sub.resolve(reason)
                         }
                         this._subscriptions.delete(subscriptionId)
                     } else {
@@ -426,7 +424,7 @@ export default class Connection {
             const details = msg.details
             const args = msg.args ?? []
             const kwArgs = msg.kwArgs ?? {}
-            const subs = this._subscriptions.get(subscriptionId)
+            const subs = this._subscriptions.get(subscriptionId) ?? []
             const evt = new WampEvent(
                 publicationId,
                 details.topic ?? subs[0]?.topic,
@@ -492,12 +490,12 @@ export default class Connection {
                 if (details != null) {
                     const registrationId: number =
                         details.registration as number
-                    // const reason = details.reason
+                    const reason = details.reason
                     if (this._registrations.has(registrationId)) {
                         const registration =
-                            this._registrations.get(registrationId)
+                            this._registrations.get(registrationId) as Registration
                         registration.active = false
-                        // registration._on_unregister.resolve(reason);
+                        registration.resolve(reason)
                         this._registrations.delete(registrationId)
                     } else {
                         this._protocol_violation(
@@ -518,7 +516,7 @@ export default class Connection {
         const registrationId = msg.registration_id
         const details = msg.details
         if (this._registrations.has(registrationId)) {
-            const reg = this._registrations.get(registrationId)
+            const reg = this._registrations.get(registrationId) as Registration
             const args = msg.args
             const kwArgs = msg.kwArgs
             let progress = null
@@ -838,8 +836,11 @@ export default class Connection {
         return await d.promise
     }
 
-    public async unsubscribe(subscription: TodoType): Promise<boolean> {
-        const subs = this._subscriptions.get(subscription.id)
+    public async unsubscribe(subscription: Subscription): Promise<boolean> {
+        if (!this._subscriptions.has(subscription.id)) {
+            throw new Error('subscription not active')
+        }
+        const subs = this._subscriptions.get(subscription.id) ?? []
         const i = subs.indexOf(subscription)
         const remove = (): void => {
             if (i >= 0) {

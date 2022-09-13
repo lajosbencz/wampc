@@ -1,5 +1,6 @@
 import Connection from '../connection'
-import { Args, KwArgs } from '../types'
+import {Args, KwArgs} from '../types'
+import {Deferred} from "es6-deferred-promise";
 
 export default class Subscription {
     topic: any
@@ -8,6 +9,8 @@ export default class Subscription {
     connection: Connection
     id: number
     active: boolean = true
+
+    protected _on_unsubscribe: Deferred<any> = new Deferred<any>()
 
     constructor(
         topic: string,
@@ -22,6 +25,14 @@ export default class Subscription {
         this.connection = connection
         this.id = id
         this.active = true
+    }
+
+    public get on_unsubscribe(): Promise<any> {
+        return this._on_unsubscribe.promise
+    }
+
+    public resolve(reason?: any) {
+        this._on_unsubscribe.resolve(reason)
     }
 
     async unsubscribe(): Promise<boolean> {
