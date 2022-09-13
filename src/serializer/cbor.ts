@@ -7,11 +7,24 @@ export class CborSerializer implements Serializer {
     isBinary: boolean = true
 
     serialize(obj: ArrayOrObject): string {
-        return encode(obj).toString()
+        try {
+            // @ts-ignore
+            return encode(obj)
+        }
+        catch(e) {
+            console.error('Cbor encoding error', e)
+            throw e
+        }
     }
 
     unserialize(payload: string): ArrayOrObject {
-        return decode(Buffer.from(payload))
+        try {
+            return decode(Buffer.from(payload))
+        }
+        catch(e) {
+            console.error('Cbor decoding error', e)
+            throw e
+        }
     }
 }
 
