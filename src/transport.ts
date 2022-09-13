@@ -1,9 +1,9 @@
-import {Deferred} from "es6-deferred-promise"
-import {Message} from "./message"
-import {ProtocolType} from "./protocol"
-import Serializer from "./serializer"
-import JsonSerializer from "./serializer/json"
-import {ArrayOrObject} from "./types"
+import { Deferred } from 'es6-deferred-promise'
+import { Message } from './message'
+import { ProtocolType } from './protocol'
+import Serializer from './serializer'
+import JsonSerializer from './serializer/json'
+import { ArrayOrObject } from './types'
 
 export enum TransportType {
     WebSocket = 'websocket',

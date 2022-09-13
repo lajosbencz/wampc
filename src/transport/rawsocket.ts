@@ -4,10 +4,12 @@ import { Message } from '../message'
 import { Protocol, ProtocolOptions } from './rawsocket/protocol'
 import { Deferred } from 'es6-deferred-promise'
 
-
-export default class RawSocketTransport extends Transport implements Transporter {
+export default class RawSocketTransport
+    extends Transport
+    implements Transporter
+{
     protected _protocol?: Protocol
-    onMessage: (msg: Message) => Promise<void> = async () => { }
+    onMessage: (msg: Message) => Promise<void> = async () => {}
 
     // constructor(options: TransportOptions) {
     //     super(options)
@@ -19,41 +21,41 @@ export default class RawSocketTransport extends Transport implements Transporter
         if (url.protocol === 'unix' || url.protocol === 'sock') {
             connectionOptions = {
                 path: this._options.url,
-                allowHalfOpen: true
+                allowHalfOpen: true,
             }
         } else {
             connectionOptions = {
                 port: url.port ?? 8000,
                 host: url.hostname ?? 'localhost',
-                allowHalfOpen: true
+                allowHalfOpen: true,
             }
         }
         const Socket = (await import('net')).Socket
         const socket = new Socket()
         const protocol = new Protocol(socket, {
-            serializer: this._options.protocols.map(p => p.split('.')[2])[0],
+            serializer: (this._options.protocols as string[]).map((p) => p.split('.')[2])[0],
         } as ProtocolOptions)
 
         protocol.on('connect', (evt) => {
             console.log('RawSocket transport negotiated')
             this._deferred_open.resolve(evt)
-        });
+        })
 
         protocol.on('data', (raw) => {
             const data = this._serializer.unserialize(raw)
-            console.log('<', data);
+            console.log('<', data)
             const msg = Message.fromArray(data as any[])
             this.onMessage(msg).catch(console.error)
-        });
+        })
 
         protocol.on('close', (hadError) => {
             console.log('RawSocket transport closed')
             this._deferred_close?.resolve({
                 code: 999,
                 reason: '',
-                wasClean: !hadError
+                wasClean: !hadError,
             })
-        });
+        })
 
         protocol.on('error', (error) => {
             console.error('RawSocket transport error', error)

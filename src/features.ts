@@ -1,6 +1,6 @@
-import { TodoType } from "./types"
+import { TodoType } from './types'
 
-const Features:TodoType = {
+const Features: TodoType = {
     caller: {
         features: {
             caller_identification: true,

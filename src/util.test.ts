@@ -1,4 +1,4 @@
-import {asCancelablePromise, asPromise} from "./util";
+import { asCancelablePromise, asPromise } from './util'
 
 describe('testing utils', () => {
     test('callback as promise', async () => {

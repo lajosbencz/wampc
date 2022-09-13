@@ -1,6 +1,6 @@
-import {Deferred} from "es6-deferred-promise"
-import Client from "./client"
-import Features from "./features"
+import { Deferred } from 'es6-deferred-promise'
+import Client from './client'
+import Features from './features'
 import {
     AbortMessage,
     AuthenticateMessage,
@@ -26,23 +26,29 @@ import {
     UnsubscribedMessage,
     UnsubscribeMessage,
     WelcomeMessage,
-    YieldMessage
-} from "./message"
-import {asCancelablePromise, asPromise} from "./util"
-import {ProtocolType} from "./protocol"
-import {Transporter, TransportOptions, TransportOptionsDefaults} from "./transport"
-import {Args, KwArgs, TodoType} from "./types"
-import Result from "./wamp/result"
-import Session from "./wamp/session"
-import WampError from "./wamp/error"
-import WampEvent from "./wamp/event"
-import Subscription from "./wamp/subscription"
-import Publication from "./wamp/publication"
-import Registration from "./wamp/registration"
-import WampInvocation from "./wamp/invocation"
+    YieldMessage,
+} from './message'
+import { asCancelablePromise, asPromise } from './util'
+import { ProtocolType } from './protocol'
+import {
+    Transporter,
+    TransportOptions,
+    TransportOptionsDefaults,
+} from './transport'
+import { Args, KwArgs, TodoType } from './types'
+import Result from './wamp/result'
+import Session from './wamp/session'
+import WampError from './wamp/error'
+import WampEvent from './wamp/event'
+import Subscription from './wamp/subscription'
+import Publication from './wamp/publication'
+import Registration from './wamp/registration'
+import WampInvocation from './wamp/invocation'
 
-
-export async function transportFromUri(uri: string, opts?: TransportOptions): Promise<Transporter> {
+export async function transportFromUri(
+    uri: string,
+    opts?: TransportOptions
+): Promise<Transporter> {
     opts = opts ?? TransportOptionsDefaults
     opts.url = uri
     let scheme = 'ws'
@@ -53,14 +59,14 @@ export async function transportFromUri(uri: string, opts?: TransportOptions): Pr
     switch (scheme) {
         case 'ws':
         case 'http':
-            T = (await import("./transport/websocket.js")).default
-            break;
+            T = (await import('./transport/websocket.js')).default
+            break
         case 'tcp':
             if (typeof window !== 'undefined') {
                 throw new Error('RawSocket must be run with NodeJS')
             }
-            T = (await import("./transport/rawsocket.js")).default
-            break;
+            T = (await import('./transport/rawsocket.js')).default
+            break
         default:
             throw Error('unknown url scheme: ' + scheme)
     }
@@ -137,11 +143,17 @@ export default class Connection {
             // fill in features that both peers support
             if ('features' in f.roles.broker) {
                 for (const att in Features.publisher.features) {
-                    this._features.publisher[att] = (Features.publisher.features[att] && f.roles.broker.features[att]) || false
+                    this._features.publisher[att] =
+                        (Features.publisher.features[att] &&
+                            f.roles.broker.features[att]) ||
+                        false
                 }
                 for (const att in Features.subscriber.features) {
                     // const b = Features.subscriber.features[0]
-                    this._features.subscriber[att] = (Features.subscriber.features[att] && f.roles.broker.features[att]) || false
+                    this._features.subscriber[att] =
+                        (Features.subscriber.features[att] &&
+                            f.roles.broker.features[att]) ||
+                        false
                 }
             }
         }
@@ -152,19 +164,29 @@ export default class Connection {
             // fill in features that both peers support
             if ('features' in f.roles.dealer) {
                 for (const att in Features.caller.features) {
-                    this._features.caller[att] = (Features.caller.features[att] && f.roles.dealer.features[att]) || false
+                    this._features.caller[att] =
+                        (Features.caller.features[att] &&
+                            f.roles.dealer.features[att]) ||
+                        false
                 }
                 for (const att in Features.callee.features) {
-                    this._features.callee[att] = (Features.callee.features[att] && f.roles.dealer.features[att]) || false
+                    this._features.callee[att] =
+                        (Features.callee.features[att] &&
+                            f.roles.dealer.features[att]) ||
+                        false
                 }
             }
         }
     }
 
     protected _protocol_violation(reason: string): void {
-        const err = Error("failing transport due to protocol violation: " + reason)
+        const err = Error(
+            'failing transport due to protocol violation: ' + reason
+        )
         console.error(err)
-        this.transport.close(3002, "protocol violation: " + reason).catch(console.error)
+        this.transport
+            .close(3002, 'protocol violation: ' + reason)
+            .catch(console.error)
         // util.handle_error(self._on_internal_error, Error("failing transport due to protocol violation: " + reason))
     }
 
@@ -187,27 +209,47 @@ export default class Connection {
                 let authMsg: AuthenticateMessage
                 if (typeof signature === 'string') {
                     authMsg = new AuthenticateMessage(signature, {})
-                } else {// if (typeof signature === 'object') {
-                    authMsg = new AuthenticateMessage(signature[0], signature[1])
+                } else {
+                    // if (typeof signature === 'object') {
+                    authMsg = new AuthenticateMessage(
+                        signature[0],
+                        signature[1]
+                    )
                 }
                 this.send(authMsg)
             } catch (e) {
-                console.error("onchallenge() raised: ", e)
-                const aborMsg = new AbortMessage({message: "sorry, I cannot authenticate (onchallenge handler raised an exception)"}, "wamp.error.cannot_authenticate")
+                console.error('onchallenge() raised: ', e)
+                const aborMsg = new AbortMessage(
+                    {
+                        message:
+                            'sorry, I cannot authenticate (onchallenge handler raised an exception)',
+                    },
+                    'wamp.error.cannot_authenticate'
+                )
                 this.send(aborMsg)
                 await this.close(3000, '')
             }
         } else {
-            const err = new Error("received WAMP challenge, but no onchallenge() handler set")
+            const err = new Error(
+                'received WAMP challenge, but no onchallenge() handler set'
+            )
             console.error(err)
-            this.send(new AbortMessage({message: "sorry, I cannot authenticate (no onchallenge handler set)"}, "wamp.error.cannot_authenticate"))
+            this.send(
+                new AbortMessage(
+                    {
+                        message:
+                            'sorry, I cannot authenticate (no onchallenge handler set)',
+                    },
+                    'wamp.error.cannot_authenticate'
+                )
+            )
             await this.close(3000, '')
         }
     }
 
     protected _processGoodbye(msg: GoodbyeMessage): void {
         if (!this._goodbye_sent) {
-            const byeMsg = new GoodbyeMessage({}, "wamp.error.goodbye_and_out")
+            const byeMsg = new GoodbyeMessage({}, 'wamp.error.goodbye_and_out')
             this.send(byeMsg)
         }
         this._session.id = -1
@@ -220,22 +262,22 @@ export default class Connection {
         switch (msg.error_type) {
             case MessageType.SUBSCRIBE:
                 reqs = this._subscribe_reqs
-                break;
+                break
             case MessageType.UNSUBSCRIBE:
                 reqs = this._unsubscribe_reqs
-                break;
+                break
             case MessageType.PUBLISH:
                 reqs = this._publish_reqs
-                break;
+                break
             case MessageType.REGISTER:
                 reqs = this._register_reqs
-                break;
+                break
             case MessageType.UNREGISTER:
                 reqs = this._unregister_reqs
-                break;
+                break
             case MessageType.CALL:
                 reqs = this._call_reqs
-                break;
+                break
             default:
                 throw Error(`unknown error type: ${msg.error_type}`)
         }
@@ -246,7 +288,9 @@ export default class Connection {
             d.reject(err)
             reqs.delete(requestId)
         } else {
-            this._protocol_violation(`ERROR received for ${msg.error_type} request ID ${requestId}`)
+            this._protocol_violation(
+                `ERROR received for ${msg.error_type} request ID ${requestId}`
+            )
         }
     }
 
@@ -257,7 +301,7 @@ export default class Connection {
             const args = msg.args ?? []
             const kwArgs = msg.kwArgs ?? {}
 
-            let result = null;
+            let result = null
             if (args.length > 1 || Object.keys(kwArgs).length > 0) {
                 // wrap complex result is more than 1 positional result OR
                 // non-empty keyword result
@@ -276,7 +320,9 @@ export default class Connection {
                 this._call_reqs.delete(requestId)
             }
         } else {
-            this._protocol_violation(`CALL-RESULT received for non-pending request ID ${requestId}`)
+            this._protocol_violation(
+                `CALL-RESULT received for non-pending request ID ${requestId}`
+            )
         }
     }
 
@@ -284,16 +330,25 @@ export default class Connection {
         const requestId = msg.request_id
         const subscriptionId = msg.subscription_id
         if (this._subscribe_reqs.has(requestId)) {
-            const [d, topic, handler, options] = this._subscribe_reqs.get(requestId)
+            const [d, topic, handler, options] =
+                this._subscribe_reqs.get(requestId)
             if (!this._subscriptions.has(subscriptionId)) {
                 this._subscriptions.set(subscriptionId, [])
             }
-            const sub = new Subscription(topic, handler, options, this, subscriptionId)
+            const sub = new Subscription(
+                topic,
+                handler,
+                options,
+                this,
+                subscriptionId
+            )
             this._subscriptions.get(subscriptionId).push(sub)
             d.resolve(sub)
             this._subscribe_reqs.delete(requestId)
         } else {
-            this._protocol_violation(`SUBSCRIBED received for non-pending request ID ${requestId}`)
+            this._protocol_violation(
+                `SUBSCRIBED received for non-pending request ID ${requestId}`
+            )
         }
     }
 
@@ -317,7 +372,8 @@ export default class Connection {
                 console.warn('router actively revoked our subscription')
                 const details = msg.details
                 if (details != null) {
-                    const subscriptionId: number = details.subscription as number
+                    const subscriptionId: number =
+                        details.subscription as number
                     const reason = details.reason
                     if (this._subscriptions.has(subscriptionId)) {
                         const subs = this._subscriptions.get(subscriptionId)
@@ -327,11 +383,15 @@ export default class Connection {
                         }
                         this._subscriptions.delete(subscriptionId)
                     } else {
-                        this._protocol_violation(`non-voluntary UNSUBSCRIBED received for non-existing subscription ID ${subscriptionId}`)
+                        this._protocol_violation(
+                            `non-voluntary UNSUBSCRIBED received for non-existing subscription ID ${subscriptionId}`
+                        )
                     }
                 }
             } else {
-                this._protocol_violation(`UNSUBSCRIBED received for non-pending request ID ${requestId}`)
+                this._protocol_violation(
+                    `UNSUBSCRIBED received for non-pending request ID ${requestId}`
+                )
             }
         }
     }
@@ -345,7 +405,9 @@ export default class Connection {
             d.resolve(pub)
             this._publish_reqs.delete(requestId)
         } else {
-            this._protocol_violation(`PUBLISHED received for non-pending request ID ${requestId}`)
+            this._protocol_violation(
+                `PUBLISHED received for non-pending request ID ${requestId}`
+            )
         }
     }
 
@@ -375,7 +437,9 @@ export default class Connection {
                 }
             }
         } else {
-            this._protocol_violation(`EVENT received for non-subscribed subscription ID ${subscriptionId}`)
+            this._protocol_violation(
+                `EVENT received for non-subscribed subscription ID ${subscriptionId}`
+            )
         }
     }
 
@@ -383,13 +447,22 @@ export default class Connection {
         const requestId = msg.request_id
         const registrationId = msg.registration_id
         if (this._register_reqs.has(requestId)) {
-            const [d, procedure, endpoint, options] = this._register_reqs.get(requestId)
-            const reg = new Registration(procedure, endpoint, options, this, registrationId)
+            const [d, procedure, endpoint, options] =
+                this._register_reqs.get(requestId)
+            const reg = new Registration(
+                procedure,
+                endpoint,
+                options,
+                this,
+                registrationId
+            )
             this._registrations.set(registrationId, reg)
             d.resolve(reg)
             this._register_reqs.delete(requestId)
         } else {
-            this._protocol_violation(`REGISTERED received for non-pending request ID ${requestId}`)
+            this._protocol_violation(
+                `REGISTERED received for non-pending request ID ${requestId}`
+            )
         }
     }
 
@@ -409,19 +482,25 @@ export default class Connection {
                 console.warn('router actively revoked our registration')
                 const details = msg.details
                 if (details != null) {
-                    const registrationId: number = details.registration as number
+                    const registrationId: number =
+                        details.registration as number
                     // const reason = details.reason
                     if (this._registrations.has(registrationId)) {
-                        const registration = this._registrations.get(registrationId)
+                        const registration =
+                            this._registrations.get(registrationId)
                         registration.active = false
                         // registration._on_unregister.resolve(reason);
                         this._registrations.delete(registrationId)
                     } else {
-                        this._protocol_violation(`non-voluntary UNREGISTERED received for non-existing registration ID ${registrationId}`)
+                        this._protocol_violation(
+                            `non-voluntary UNREGISTERED received for non-existing registration ID ${registrationId}`
+                        )
                     }
                 }
             } else {
-                this._protocol_violation(`UNREGISTERED received for non-pending request ID ${requestId}`)
+                this._protocol_violation(
+                    `UNREGISTERED received for non-pending request ID ${requestId}`
+                )
             }
         }
     }
@@ -437,7 +516,12 @@ export default class Connection {
             let progress = null
             if (details?.receive_progress === true) {
                 progress = (args?: Args, kwArgs?: KwArgs) => {
-                    const msgYield = new YieldMessage(requestId, {progress: true}, args, kwArgs)
+                    const msgYield = new YieldMessage(
+                        requestId,
+                        { progress: true },
+                        args,
+                        kwArgs
+                    )
                     this.send(msgYield)
                 }
             }
@@ -455,7 +539,10 @@ export default class Connection {
                 if (res instanceof Result) {
                     yieldArgs = res.args
                     yieldKwArgs = res.kwArgs
-                } else if (typeof res === 'object' && ('args' in res || 'kwArgs' in res)) {
+                } else if (
+                    typeof res === 'object' &&
+                    ('args' in res || 'kwArgs' in res)
+                ) {
                     yieldArgs = res.args
                     yieldKwArgs = res.kwArgs
                 } else if (Array.isArray(res)) {
@@ -465,7 +552,12 @@ export default class Connection {
                 } else {
                     yieldArgs = [res]
                 }
-                const msgYield = new YieldMessage(requestId, {}, yieldArgs, yieldKwArgs)
+                const msgYield = new YieldMessage(
+                    requestId,
+                    {},
+                    yieldArgs,
+                    yieldKwArgs
+                )
                 this.send(msgYield)
             } catch (e) {
                 let err
@@ -474,12 +566,21 @@ export default class Connection {
                 } else {
                     err = e
                 }
-                const msgError = new ErrorMessage(MessageType.INVOCATION, requestId, {}, err?.error ?? 'wamp.error.runtime_error', err?.args ?? [], err?.kwArgs)
+                const msgError = new ErrorMessage(
+                    MessageType.INVOCATION,
+                    requestId,
+                    {},
+                    err?.error ?? 'wamp.error.runtime_error',
+                    err?.args ?? [],
+                    err?.kwArgs
+                )
                 this.send(msgError)
-                console.error("Exception raised in invocation handler:", err)
+                console.error('Exception raised in invocation handler:', err)
             }
         } else {
-            this._protocol_violation(`INVOCATION received for non-registered registration ID ${requestId}`)
+            this._protocol_violation(
+                `INVOCATION received for non-registered registration ID ${requestId}`
+            )
         }
     }
 
@@ -488,52 +589,56 @@ export default class Connection {
             switch (msg.getType()) {
                 case MessageType.WELCOME:
                     this._processWelcome(msg as WelcomeMessage)
-                    break;
+                    break
                 case MessageType.ABORT:
                     this._processAbort(msg as AbortMessage)
-                    break;
+                    break
                 case MessageType.CHALLENGE:
                     await this._processChallenge(msg as ChallengeMessage)
-                    break;
+                    break
                 default:
-                    this._protocol_violation(`unexpected message type ${msg.getType()}`)
+                    this._protocol_violation(
+                        `unexpected message type ${msg.getType()}`
+                    )
                     break
             }
         } else {
             switch (msg.getType()) {
                 case MessageType.GOODBYE:
                     this._processGoodbye(msg as GoodbyeMessage)
-                    break;
+                    break
                 case MessageType.ERROR:
                     this._processError(msg as ErrorMessage)
-                    break;
+                    break
                 case MessageType.SUBSCRIBED:
                     this._processSubscribed(msg as SubscribedMessage)
-                    break;
+                    break
                 case MessageType.UNSUBSCRIBED:
                     this._processUnsubscribed(msg as UnsubscribedMessage)
-                    break;
+                    break
                 case MessageType.PUBLISHED:
                     this._processPublished(msg as PublishedMessage)
-                    break;
+                    break
                 case MessageType.REGISTERED:
                     this._processRegistered(msg as RegisteredMessage)
-                    break;
+                    break
                 case MessageType.UNREGISTERED:
                     this._processUnregistered(msg as UnregisteredMessage)
-                    break;
+                    break
                 case MessageType.EVENT:
                     this._processEvent(msg as EventMessage)
-                    break;
+                    break
                 case MessageType.INVOCATION:
                     await this._processInvocation(msg as InvocationMessage)
-                    break;
+                    break
                 case MessageType.RESULT:
                     this._processResult(msg as ResultMessage)
-                    break;
+                    break
                 default:
-                    this._protocol_violation(`unexpected message type ${msg.getType()}`)
-                    break;
+                    this._protocol_violation(
+                        `unexpected message type ${msg.getType()}`
+                    )
+                    break
             }
         }
     }
@@ -563,9 +668,12 @@ export default class Connection {
         this._joined = false
         const transportOptions = Object.assign({}, TransportOptionsDefaults, {
             url: this._url,
-            protocols: this._options?.protocols
+            protocols: this._options?.protocols,
         })
-        this._transport = await transportFromUri(transportOptions.url, transportOptions)
+        this._transport = await transportFromUri(
+            transportOptions.url,
+            transportOptions
+        )
         this._transport.onMessage = async (msg: Message) => {
             console.log(msg)
             await this._processMessage(msg)
@@ -573,12 +681,12 @@ export default class Connection {
         return await new Promise<Event>((resolve, reject) => {
             this.transport
                 .open()
-                .then(evtOpen => {
+                .then((evtOpen) => {
                     this._opened = true
                     const msg = new HelloMessage(this._session.realm, {
                         roles: Features,
                         authmethods: this._options.authmethods,
-                        authid: this._options.authid
+                        authid: this._options.authid,
                     })
                     this.send(msg)
                     resolve(evtOpen)
@@ -612,9 +720,17 @@ export default class Connection {
         return await this._deferred_leave.promise
     }
 
-    public async call(rpc: string, args?: Args, kwArgs?: KwArgs, options?: KwArgs): Promise<Result> {
+    public async call(
+        rpc: string,
+        args?: Args,
+        kwArgs?: KwArgs,
+        options?: KwArgs
+    ): Promise<Result> {
         options = options ?? {}
-        if (options.disclose_me === undefined && this._options.caller_disclose_me) {
+        if (
+            options.disclose_me === undefined &&
+            this._options.caller_disclose_me
+        ) {
             options.disclose_me = true
         }
         await this.tryOpen()
@@ -628,21 +744,34 @@ export default class Connection {
         promise.cancel = (cancelOptions?: KwArgs) => {
             const msg = new CancelMessage(requestId, cancelOptions ?? {})
             this.send(msg)
-            if (this._call_reqs.has(requestId) && (cancelOptions == null || !('mode' in cancelOptions) || cancelOptions.mode !== "kill")) {
+            if (
+                this._call_reqs.has(requestId) &&
+                (cancelOptions == null ||
+                    !('mode' in cancelOptions) ||
+                    cancelOptions.mode !== 'kill')
+            ) {
                 // When the mode is not 'kill' it will never receive a call result.
                 // So when the request was still in the list, reject and remove it.
                 const cancelledDefer = this._call_reqs.get(requestId)[0]
-                cancelledDefer.reject(new Error("Cancelled"))
+                cancelledDefer.reject(new Error('Cancelled'))
                 this._call_reqs.delete(requestId)
             }
         }
         return promise.promise
     }
 
-    public async publish(topic: string, args?: Args, kwArgs?: KwArgs, options?: KwArgs): Promise<Publication | void> {
+    public async publish(
+        topic: string,
+        args?: Args,
+        kwArgs?: KwArgs,
+        options?: KwArgs
+    ): Promise<Publication | void> {
         options = options ?? {}
-        if (options.disclose_me === undefined && this._options.publisher_disclose_me) {
-            options.disclose_me = true;
+        if (
+            options.disclose_me === undefined &&
+            this._options.publisher_disclose_me
+        ) {
+            options.disclose_me = true
         }
         await this.tryOpen()
         const session = await this.getSession()
@@ -652,15 +781,24 @@ export default class Connection {
             d = new Deferred<Publication>()
             this._publish_reqs.set(requestId, [d, options])
         }
-        const msg = new PublishMessage(requestId, options, this.resolve(topic), args, kwArgs)
+        const msg = new PublishMessage(
+            requestId,
+            options,
+            this.resolve(topic),
+            args,
+            kwArgs
+        )
         this.send(msg)
         if (d != null) {
             return await d.promise
         }
-
     }
 
-    public async subscribe(topic: string, handler: TodoType, options?: KwArgs): Promise<Subscription> {
+    public async subscribe(
+        topic: string,
+        handler: TodoType,
+        options?: KwArgs
+    ): Promise<Subscription> {
         options = options ?? {}
         await this.tryOpen()
         const session = await this.getSession()
@@ -672,14 +810,22 @@ export default class Connection {
         return await d.promise
     }
 
-    public async register(procedure: string, endpoint: TodoType, options?: KwArgs): Promise<Registration> {
+    public async register(
+        procedure: string,
+        endpoint: TodoType,
+        options?: KwArgs
+    ): Promise<Registration> {
         options = options ?? {}
         await this.tryOpen()
         const session = await this.getSession()
         const requestId = session.nextId()
         const d = new Deferred<Registration>()
         this._register_reqs.set(requestId, [d, procedure, endpoint, options])
-        const msg = new RegisterMessage(requestId, options, this.resolve(procedure))
+        const msg = new RegisterMessage(
+            requestId,
+            options,
+            this.resolve(procedure)
+        )
         this.send(msg)
         return await d.promise
     }
@@ -695,16 +841,16 @@ export default class Connection {
         }
         if (!this._joined) {
             remove()
-            throw new Error("session not open")
+            throw new Error('session not open')
         }
 
         if (!subscription.active || !this._subscriptions.has(subscription.id)) {
             remove()
-            throw new Error("subscription not active")
+            throw new Error('subscription not active')
         }
 
         if (i < 0) {
-            throw new Error("subscription not active")
+            throw new Error('subscription not active')
         }
         remove()
 
@@ -725,7 +871,7 @@ export default class Connection {
 
     public async unregister(registration: TodoType): Promise<void> {
         if (!registration.active || !this._registrations.has(registration.id)) {
-            throw new Error("registration not active")
+            throw new Error('registration not active')
         }
         await this.tryOpen()
         const session = await this.getSession()
@@ -749,20 +895,22 @@ export default class Connection {
 
     public resolve(curie: string): string {
         // skip if not a CURIE
-        const i = curie.indexOf(":");
+        const i = curie.indexOf(':')
         if (i >= 0) {
-            const prefix = curie.substring(0, i);
+            const prefix = curie.substring(0, i)
             if (this._prefixes.has(prefix)) {
-                return this._prefixes.get(prefix) as string + '.' + curie.substring(i + 1);
+                return (
+                    (this._prefixes.get(prefix) as string) +
+                    '.' +
+                    curie.substring(i + 1)
+                )
             } else {
-                return curie;
+                return curie
             }
         } else {
-            return curie;
+            return curie
         }
     }
 }
 
-export {
-    Options as ConnectionOptions,
-}
+export { Options as ConnectionOptions }

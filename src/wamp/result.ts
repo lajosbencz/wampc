@@ -1,4 +1,4 @@
-import { Args, KwArgs } from "../types"
+import { Args, KwArgs } from '../types'
 
 export default class Result {
     args?: Args = []

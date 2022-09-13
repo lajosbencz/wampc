@@ -1,4 +1,3 @@
-
 export async function asPromise(
     callback: (...args: any) => any,
     ...args: any
@@ -16,17 +15,17 @@ export async function asPromise(
 export function asCancelablePromise<T>(p: Promise<T>): any {
     let hasCanceled_ = false
     const wrappedPromise = new Promise<T>((resolve, reject) => {
-        p.then(val =>
+        p.then((val) =>
             hasCanceled_ ? reject({ isCanceled: true }) : resolve(val)
-        );
-        p.catch(error =>
+        )
+        p.catch((error) =>
             hasCanceled_ ? reject({ isCanceled: true }) : reject(error)
-        );
+        )
     })
     return {
         promise: wrappedPromise,
         cancel() {
-            hasCanceled_ = true;
+            hasCanceled_ = true
         },
     }
 }

@@ -14,14 +14,19 @@ export default interface Serializer {
     unserialize: (payload: string) => ArrayOrObject
 }
 
-export async function serializerFromProtocol(p: ProtocolType): Promise<Serializer> {
+export async function serializerFromProtocol(
+    p: ProtocolType
+): Promise<Serializer> {
     switch (p) {
         case ProtocolType.Wamp2Json:
-            return (await import('./serializer/json')).default as unknown as Serializer
+            return (await import('./serializer/json'))
+                .default as unknown as Serializer
         case ProtocolType.Wamp2Msgpack:
-            return (await import('./serializer/msgpack')).default as unknown as Serializer
+            return (await import('./serializer/msgpack'))
+                .default as unknown as Serializer
         case ProtocolType.Wamp2Cbor:
-            return (await import('./serializer/cbor')).default as unknown as Serializer
+            return (await import('./serializer/cbor'))
+                .default as unknown as Serializer
         default:
             throw new Error(`unknown protocol: ${p}`)
     }

@@ -1,7 +1,6 @@
 import { Args, KwArgs } from '../types'
 import Result from './result'
 
-
 export enum ErrorCode {
     SUCCESS = 0,
     URI_ERROR = 1,
@@ -47,7 +46,6 @@ export const ErrorMessage = {
     [ErrorCode.CRA_EXCEPTION]:
         'Exception raised during CRA challenge processing',
 }
-
 
 export default class Error extends Result {
     public error: string = ''

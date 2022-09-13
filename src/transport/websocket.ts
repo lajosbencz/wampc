@@ -6,9 +6,12 @@ import { serializerFromProtocol } from '../serializer'
 import { Transport, Transporter } from '../transport'
 import { ArrayOrObject } from '../types'
 
-export default class WebSocketTransport extends Transport implements Transporter {
+export default class WebSocketTransport
+    extends Transport
+    implements Transporter
+{
     protected _ws?: WebSocket
-    onMessage: (msg: Message) => Promise<void> = async () => { }
+    onMessage: (msg: Message) => Promise<void> = async () => {}
 
     // constructor(options: TransportOptions) {
     //     super(options)
@@ -17,7 +20,9 @@ export default class WebSocketTransport extends Transport implements Transporter
     async open(): Promise<Event> {
         const ws = new WebSocket(this._options.url, this._options.protocols)
         ws.onopen = async (evt: Event) => {
-            this._serializer = await serializerFromProtocol(ws.protocol as ProtocolType)
+            this._serializer = await serializerFromProtocol(
+                ws.protocol as ProtocolType
+            )
             this._deferred_open?.resolve(evt)
         }
         ws.onmessage = (evt: MessageEvent) => {
@@ -41,8 +46,7 @@ export default class WebSocketTransport extends Transport implements Transporter
         this._deferred_close = new Deferred<CloseEvent>()
         try {
             this._ws?.close(code, reason)
-        }
-        catch (e) {
+        } catch (e) {
             // console.error(e)
         }
         return await this._deferred_close.promise

@@ -1,7 +1,7 @@
-import EventEmitter from "events"
-import {SerializerType} from "../../serializer"
-import {Nullable} from "../../types"
-import {Socket} from 'net'
+import EventEmitter from 'events'
+import { SerializerType } from '../../serializer'
+import { Nullable } from '../../types'
+import { Socket } from 'net'
 
 export enum ProtocolStatus {
     CLOSED = -1,
@@ -55,8 +55,7 @@ export const ProtocolOptionsDefaults = {
     packet_timeout: 2000,
 }
 
-export class ProtocolError extends Error {
-}
+export class ProtocolError extends Error {}
 
 export class Protocol {
     protected _options: ProtocolOptions
@@ -74,7 +73,11 @@ export class Protocol {
     protected _peer_max_len_exp: number = 0
 
     constructor(stream: Socket, options?: ProtocolOptions) {
-        this._options = Object.assign({}, ProtocolOptionsDefaults, options ?? {})
+        this._options = Object.assign(
+            {},
+            ProtocolOptionsDefaults,
+            options ?? {}
+        )
         this._stream = stream
         this._emitter = new EventEmitter()
         this._buffer = Buffer.alloc(4)
@@ -96,10 +99,12 @@ export class Protocol {
             })
         })
 
-
         const serializerType = this._options.serializer as SerializerType
         const protocolSerializer = ProtocolSerializer[serializerType]
-        if (protocolSerializer === undefined) throw new Error('invalid serializer for rawsocket: ' + serializerType)
+        if (protocolSerializer === undefined)
+            throw new Error(
+                'invalid serializer for rawsocket: ' + serializerType
+            )
     }
 
     close(): ProtocolStatus {
@@ -109,7 +114,7 @@ export class Protocol {
     }
 
     write(msg: any, type?: number, callback?: (...args: any) => void): void {
-        type = type === undefined ? 0 : type;
+        type = type === undefined ? 0 : type
         // if (type === ProtocolMessageTypes.WAMP) {
         //     msg = JSON.stringify(msg)
         // }
@@ -146,7 +151,10 @@ export class Protocol {
     }
 
     protected setupPingTimeout(): void {
-        if (this._options.ping_timeout !== undefined && this._options.ping_timeout > 0) {
+        if (
+            this._options.ping_timeout !== undefined &&
+            this._options.ping_timeout > 0
+        ) {
             this._ping_timeout = setTimeout(
                 this.onPingTimeout.bind(this),
                 this._options.ping_timeout
@@ -163,7 +171,10 @@ export class Protocol {
 
     protected setupAutoPing(): void {
         this.clearAutoPing()
-        if (this._options.autoping !== undefined && this._options.autoping > 0) {
+        if (
+            this._options.autoping !== undefined &&
+            this._options.autoping > 0
+        ) {
             this._autoping_interval = setInterval(
                 this.ping.bind(this),
                 this._options.autoping
@@ -186,7 +197,7 @@ export class Protocol {
     }
 
     protected read(data: any): void {
-        let handler: any = null;
+        let handler: any = null
         let frame: number = -1
         switch (this._status) {
             case ProtocolStatus.CLOSED:
@@ -254,7 +265,11 @@ export class Protocol {
         // Protocol magic byte
         gday.writeUInt8(ProtocolMagicByte, 0)
         // Announce message max length and serializer
-        gday.writeUInt8((((this._options.max_len_exp as number) - 9) << 4) | ProtocolSerializer[this._options.serializer as SerializerType], 1)
+        gday.writeUInt8(
+            (((this._options.max_len_exp as number) - 9) << 4) |
+                ProtocolSerializer[this._options.serializer as SerializerType],
+            1
+        )
         // Reserved bytes
         gday.writeUInt8(0x00, 2)
         gday.writeUInt8(0x00, 3)
@@ -275,7 +290,7 @@ export class Protocol {
         data.copy(this._buffer, this._bufferLen)
         // If there still isn't enough data, increment the counter and return null
         const dataLen: number = data.length
-        if ((this._bufferLen + dataLen) < len) {
+        if (this._bufferLen + dataLen < len) {
             this._bufferLen += dataLen
             return null
             // Otherwise, return the requested frame and the leftover data
@@ -290,7 +305,12 @@ export class Protocol {
     protected handleHandshake(int32: Buffer): ProtocolStatus {
         // Check magic byte
         if (int32[0] !== ProtocolMagicByte) {
-            const err = new ProtocolError('Invalid magic byte. Expected 0x' + ProtocolMagicByte.toString(16) + ', got 0x' + int32[0].toString(16))
+            const err = new ProtocolError(
+                'Invalid magic byte. Expected 0x' +
+                    ProtocolMagicByte.toString(16) +
+                    ', got 0x' +
+                    int32[0].toString(16)
+            )
             this._emitter.emit('error', err)
             return this.close()
         }
@@ -298,7 +318,10 @@ export class Protocol {
         // Check for error
         if ((int32[1] & 0x0f) === 0) {
             const errCode = int32[1] >> 4
-            const err = new ProtocolError('Peer failed handshake: ' + (ProtocolErrors[errCode] ?? '0x' + errCode.toString(16)))
+            const err = new ProtocolError(
+                'Peer failed handshake: ' +
+                    (ProtocolErrors[errCode] ?? '0x' + errCode.toString(16))
+            )
             this._emitter.emit('error', err)
             return this.close()
         }
@@ -309,8 +332,13 @@ export class Protocol {
 
         // We only support JSON so far
         // TODO: Support more serializers
-        if (!Object.values(ProtocolSerializer).includes(this._peer_serializer)) {
-            const err = new ProtocolError('Unsupported serializer: 0x' + this._peer_serializer.toString(16))
+        if (
+            !Object.values(ProtocolSerializer).includes(this._peer_serializer)
+        ) {
+            const err = new ProtocolError(
+                'Unsupported serializer: 0x' +
+                    this._peer_serializer.toString(16)
+            )
             this._emitter.emit('error', err)
             return this.close()
         }

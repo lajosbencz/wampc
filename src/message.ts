@@ -1,4 +1,4 @@
-import {Args, KwArgs, Nullable, TodoType} from "./types"
+import { Args, KwArgs, Nullable, TodoType } from './types'
 
 export enum MessageType {
     HELLO = 1,
@@ -29,7 +29,7 @@ export enum MessageType {
 
 function fromArray(data: any[]): Message {
     const a = data
-    const type:MessageType = a.shift() as MessageType
+    const type: MessageType = a.shift() as MessageType
     switch (type) {
         case MessageType.HELLO:
             return new HelloMessage(a[0], a[1])
@@ -84,16 +84,13 @@ function fromArray(data: any[]): Message {
     }
 }
 
-
-
 function appendArgsKwArgs(m: TodoType, a: any[]): void {
     if (m.args !== undefined) {
         a.push(m.args)
         if (m.kwArgs !== undefined) {
             a.push(m.kwArgs)
         }
-    }
-    else if (m.kwArgs !== undefined) {
+    } else if (m.kwArgs !== undefined) {
         a.push([])
         a.push(m.kwArgs)
     }
@@ -118,8 +115,23 @@ export class Message {
 }
 
 export class ErrorMessage extends Message {
-    constructor(errorType: MessageType, requestId: number, details: KwArgs, error: string, args?: Args, kwArgs?: KwArgs) {
-        super(MessageType.ERROR, errorType, requestId, details, error, args, kwArgs)
+    constructor(
+        errorType: MessageType,
+        requestId: number,
+        details: KwArgs,
+        error: string,
+        args?: Args,
+        kwArgs?: KwArgs
+    ) {
+        super(
+            MessageType.ERROR,
+            errorType,
+            requestId,
+            details,
+            error,
+            args,
+            kwArgs
+        )
     }
 
     public get error_type(): MessageType {
@@ -324,12 +336,7 @@ export class PublishMessage extends Message {
     }
 
     public asArray(): any[] {
-        const a: any[] = [
-            this._type,
-            this.request_id,
-            this.options,
-            this.topic,
-        ]
+        const a: any[] = [this._type, this.request_id, this.options, this.topic]
         appendArgsKwArgs(this, a)
         return a
     }
@@ -626,11 +633,7 @@ export class YieldMessage extends Message {
     }
 
     public asArray(): any[] {
-        const a: any[] = [
-            this._type,
-            this.request_id,
-            this.options,
-        ]
+        const a: any[] = [this._type, this.request_id, this.options]
         appendArgsKwArgs(this, a)
         return a
     }
