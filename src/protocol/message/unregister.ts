@@ -1,4 +1,4 @@
-import Message, {MessageType} from "../message";
+import Message, { MessageType } from '../message'
 
 export default class UnregisterMessage extends Message {
     constructor(requestId: number, registrationId: number) {

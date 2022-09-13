@@ -1,7 +1,7 @@
 import { Deferred } from 'es6-deferred-promise'
 import 'websocket-polyfill'
 import Message from '../protocol/message'
-import {MessageFromArray} from "../protocol/message_util";
+import { MessageFromArray } from '../protocol/message_util'
 import { ProtocolType } from '../protocol'
 import { serializerFromProtocol } from '../serializer'
 import { Transport, Transporter } from '../transport'

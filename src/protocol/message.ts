@@ -1,4 +1,4 @@
-import {TodoType} from "../types";
+import { TodoType } from '../types'
 
 export enum MessageType {
     HELLO = 1,

@@ -1,5 +1,5 @@
-import Message, {MessageType} from "../message";
-import {KwArgs} from "../../types";
+import Message, { MessageType } from '../message'
+import { KwArgs } from '../../types'
 
 export default class RegisterMessage extends Message {
     constructor(requestId: number, options: KwArgs, procedure: string) {

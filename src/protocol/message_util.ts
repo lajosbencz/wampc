@@ -1,29 +1,29 @@
 // file exists to avoid circular dependency
-import Message, {MessageType} from "./message";
-import HelloMessage from "./message/hello";
-import WelcomeMessage from "./message/welcome";
-import AbortMessage from "./message/abort";
-import ChallengeMessage from "./message/challenge";
-import AuthenticateMessage from "./message/authenticate";
-import GoodbyeMessage from "./message/goodbye";
-import ErrorMessage from "./message/error";
-import PublishMessage from "./message/publish";
-import PublishedMessage from "./message/published";
-import SubscribeMessage from "./message/subscribe";
-import SubscribedMessage from "./message/subscribed";
-import UnsubscribeMessage from "./message/unsubscribe";
-import UnsubscribedMessage from "./message/unsubscribed";
-import EventMessage from "./message/event";
-import CallMessage from "./message/call";
-import CancelMessage from "./message/cancel";
-import ResultMessage from "./message/result";
-import RegisterMessage from "./message/register";
-import RegisteredMessage from "./message/registered";
-import UnregisterMessage from "./message/unregister";
-import UnregisteredMessage from "./message/unregistered";
-import InvocationMessage from "./message/invocation";
-import InterruptMessage from "./message/interrupt";
-import YieldMessage from "./message/yield";
+import Message, { MessageType } from './message'
+import HelloMessage from './message/hello'
+import WelcomeMessage from './message/welcome'
+import AbortMessage from './message/abort'
+import ChallengeMessage from './message/challenge'
+import AuthenticateMessage from './message/authenticate'
+import GoodbyeMessage from './message/goodbye'
+import ErrorMessage from './message/error'
+import PublishMessage from './message/publish'
+import PublishedMessage from './message/published'
+import SubscribeMessage from './message/subscribe'
+import SubscribedMessage from './message/subscribed'
+import UnsubscribeMessage from './message/unsubscribe'
+import UnsubscribedMessage from './message/unsubscribed'
+import EventMessage from './message/event'
+import CallMessage from './message/call'
+import CancelMessage from './message/cancel'
+import ResultMessage from './message/result'
+import RegisterMessage from './message/register'
+import RegisteredMessage from './message/registered'
+import UnregisterMessage from './message/unregister'
+import UnregisteredMessage from './message/unregistered'
+import InvocationMessage from './message/invocation'
+import InterruptMessage from './message/interrupt'
+import YieldMessage from './message/yield'
 
 export {
     AbortMessage,

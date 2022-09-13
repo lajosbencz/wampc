@@ -1,5 +1,5 @@
-import Message, {MessageType} from "../message";
-import {KwArgs, Nullable} from "../../types";
+import Message, { MessageType } from '../message'
+import { KwArgs, Nullable } from '../../types'
 
 export default class AuthenticateMessage extends Message {
     constructor(signature: string, extra?: KwArgs) {

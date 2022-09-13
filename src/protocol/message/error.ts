@@ -1,6 +1,6 @@
-import Message, {MessageType} from "../message";
-import {Args, KwArgs, Nullable} from "../../types";
-import {MessageAppendArgsKwArgs} from "../message";
+import Message, { MessageType } from '../message'
+import { Args, KwArgs, Nullable } from '../../types'
+import { MessageAppendArgsKwArgs } from '../message'
 
 export default class ErrorMessage extends Message {
     constructor(

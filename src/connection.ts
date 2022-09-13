@@ -1,7 +1,7 @@
 import { Deferred } from 'es6-deferred-promise'
 import Client from './client'
 import Features from './protocol/features'
-import Message, {MessageType} from "./protocol/message";
+import Message, { MessageType } from './protocol/message'
 import {
     AbortMessage,
     AuthenticateMessage,
@@ -111,10 +111,19 @@ export default class Connection {
 
     // protected _registered_reqs: any[] = []
 
-    constructor(client: Client, url: string, realm: string, options?: ConnectionOptions) {
+    constructor(
+        client: Client,
+        url: string,
+        realm: string,
+        options?: ConnectionOptions
+    ) {
         this._client = client
         this._url = url
-        this._options = Object.assign({}, ConnectionOptionsDefaults, options ?? {})
+        this._options = Object.assign(
+            {},
+            ConnectionOptionsDefaults,
+            options ?? {}
+        )
         this._deferred_session = new Deferred<Session>()
         this._session = new Session(realm, -1)
     }
