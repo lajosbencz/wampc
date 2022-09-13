@@ -33,7 +33,9 @@ export default class RawSocketTransport
         const Socket = (await import('net')).Socket
         const socket = new Socket()
         const protocol = new Protocol(socket, {
-            serializer: (this._options.protocols as string[]).map((p) => p.split('.')[2])[0],
+            serializer: (this._options.protocols as string[]).map(
+                (p) => p.split('.')[2]
+            )[0],
         } as ProtocolOptions)
 
         protocol.on('connect', (evt) => {
