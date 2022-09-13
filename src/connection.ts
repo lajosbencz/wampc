@@ -912,5 +912,3 @@ export default class Connection {
         }
     }
 }
-
-export { Options as ConnectionOptions }
