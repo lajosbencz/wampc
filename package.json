@@ -1,6 +1,6 @@
 {
   "name": "wampc",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "Web Application Messaging Protocol Client",
   "scripts": {
     "lint": "eslint src/**/*.{js,jsx,ts,tsx,json}",
@@ -8,7 +8,7 @@
     "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup -c",
-    "prepublish:public": "npm run build && npm-bump patch --branch master",
+    "prepublish:public": "npm run build",
     "publish:public": "npm publish --access public"
   },
   "keywords": [
