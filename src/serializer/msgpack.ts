@@ -9,11 +9,22 @@ export class MsgpackSerializer implements Serializer {
     isBinary: boolean = true
 
     serialize(obj: ArrayOrObject): string {
-        return mpak.encode(obj).toString()
+        try {
+            // @ts-ignore
+            return mpak.encode(obj)
+        } catch (e) {
+            console.error('MessagePack encoding error', e)
+            throw e
+        }
     }
 
     unserialize(payload: string): ArrayOrObject {
-        return mpak.decode(Buffer.from(payload))
+        try {
+            return mpak.decode(Buffer.from(payload))
+        } catch (e) {
+            console.error('MessagePack decoding error', e)
+            throw e
+        }
     }
 }
 
