@@ -1,4 +1,4 @@
-import { TodoType } from './types'
+import { TodoType } from '../types'
 
 const Features: TodoType = {
     caller: {

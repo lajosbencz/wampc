@@ -1,5 +1,5 @@
 import { Deferred } from 'es6-deferred-promise'
-import { Message } from './message'
+import Message from './protocol/message'
 import { ProtocolType } from './protocol'
 import Serializer from './serializer'
 import JsonSerializer from './serializer/json'

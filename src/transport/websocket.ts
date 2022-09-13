@@ -1,6 +1,7 @@
 import { Deferred } from 'es6-deferred-promise'
 import 'websocket-polyfill'
-import { Message } from '../message'
+import Message from '../protocol/message'
+import {MessageFromArray} from "../protocol/message_util";
 import { ProtocolType } from '../protocol'
 import { serializerFromProtocol } from '../serializer'
 import { Transport, Transporter } from '../transport'
@@ -28,7 +29,7 @@ export default class WebSocketTransport
         ws.onmessage = (evt: MessageEvent) => {
             const data = this._serializer.unserialize(evt.data)
             console.log('<', data)
-            const msg = Message.fromArray(data as any[])
+            const msg = MessageFromArray(data as any[])
             this.onMessage(msg).catch(console.error)
         }
         ws.onerror = (evt: any) => {

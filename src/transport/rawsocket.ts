@@ -1,6 +1,7 @@
 import { ArrayOrObject, TodoType } from '../types'
 import { Transport, Transporter } from '../transport'
-import { Message } from '../message'
+import Message from '../protocol/message'
+import {MessageFromArray} from "../protocol/message_util";
 import { Protocol, ProtocolOptions } from './rawsocket/protocol'
 import { Deferred } from 'es6-deferred-promise'
 
@@ -46,7 +47,7 @@ export default class RawSocketTransport
         protocol.on('data', (raw) => {
             const data = this._serializer.unserialize(raw)
             console.log('<', data)
-            const msg = Message.fromArray(data as any[])
+            const msg = MessageFromArray(data as any[])
             this.onMessage(msg).catch(console.error)
         })
 

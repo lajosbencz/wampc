@@ -1,6 +1,7 @@
 import { Deferred } from 'es6-deferred-promise'
 import Client from './client'
-import Features from './features'
+import Features from './protocol/features'
+import Message, {MessageType} from "./protocol/message";
 import {
     AbortMessage,
     AuthenticateMessage,
@@ -12,8 +13,6 @@ import {
     GoodbyeMessage,
     HelloMessage,
     InvocationMessage,
-    Message,
-    MessageType,
     PublishedMessage,
     PublishMessage,
     RegisteredMessage,
@@ -27,7 +26,7 @@ import {
     UnsubscribeMessage,
     WelcomeMessage,
     YieldMessage,
-} from './message'
+} from './protocol/message_util'
 import { asCancelablePromise, asPromise } from './util'
 import { ProtocolType } from './protocol'
 import {
@@ -36,14 +35,14 @@ import {
     TransportOptionsDefaults,
 } from './transport'
 import { Args, KwArgs, TodoType } from './types'
-import Result from './wamp/result'
-import Session from './wamp/session'
-import WampError from './wamp/error'
-import WampEvent from './wamp/event'
-import Subscription from './wamp/subscription'
-import Publication from './wamp/publication'
-import Registration from './wamp/registration'
-import WampInvocation from './wamp/invocation'
+import Result from './protocol/result'
+import Session from './protocol/session'
+import WampError from './protocol/error'
+import WampEvent from './protocol/event'
+import Subscription from './protocol/subscription'
+import Publication from './protocol/publication'
+import Registration from './protocol/registration'
+import WampInvocation from './protocol/invocation'
 
 export async function transportFromUri(
     uri: string,
@@ -73,7 +72,7 @@ export async function transportFromUri(
     return new T(opts)
 }
 
-export interface Options {
+export interface ConnectionOptions {
     protocols?: ProtocolType[]
     authid?: string
     authmethods?: string[]
@@ -82,7 +81,7 @@ export interface Options {
     publisher_disclose_me?: boolean
 }
 
-export const OptionsDefaults = {
+export const ConnectionOptionsDefaults = {
     protocols: [ProtocolType.Wamp2Json],
     caller_disclose_me: true,
     publisher_disclose_me: true,
@@ -91,7 +90,7 @@ export const OptionsDefaults = {
 export default class Connection {
     protected _url: string
     protected _client: Client
-    protected _options: Options
+    protected _options: ConnectionOptions
     protected _transport?: Transporter
     protected _opened: boolean = false
     protected _joined: boolean = false
@@ -112,15 +111,15 @@ export default class Connection {
 
     // protected _registered_reqs: any[] = []
 
-    constructor(client: Client, url: string, realm: string, options?: Options) {
+    constructor(client: Client, url: string, realm: string, options?: ConnectionOptions) {
         this._client = client
         this._url = url
-        this._options = Object.assign({}, OptionsDefaults, options ?? {})
+        this._options = Object.assign({}, ConnectionOptionsDefaults, options ?? {})
         this._deferred_session = new Deferred<Session>()
         this._session = new Session(realm, -1)
     }
 
-    public get options(): Options {
+    public get options(): ConnectionOptions {
         return this._options
     }
 

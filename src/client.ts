@@ -1,15 +1,15 @@
 import Connection, {
-    Options as ConnectionOptions,
-    OptionsDefaults as ConnectionOptionsDefaults,
+    ConnectionOptions,
+    ConnectionOptionsDefaults,
 } from './connection'
 import { ProtocolType } from './protocol'
 import { SerializerType } from './serializer'
 import { Args, KwArgs, TodoType } from './types'
-import Publication from './wamp/publication'
-import Registration from './wamp/registration'
-import Result from './wamp/result'
-import Session from './wamp/session'
-import Subscription from './wamp/subscription'
+import Publication from './protocol/publication'
+import Registration from './protocol/registration'
+import Result from './protocol/result'
+import Session from './protocol/session'
+import Subscription from './protocol/subscription'
 
 export interface Options {
     serializers?: SerializerType[]
