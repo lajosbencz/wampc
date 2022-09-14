@@ -1,6 +1,7 @@
 import msgpack from 'msgpack5'
 import { ArrayOrObject } from '../types'
 import Serializer, { SerializerType } from '../serializer'
+import {Buffer} from 'buffer/'
 
 const mpak = msgpack({ forceFloat64: true })
 
@@ -21,7 +22,7 @@ export class MsgpackSerializer implements Serializer {
     unserialize(payload: string): ArrayOrObject {
         try {
             // @ts-ignore
-            return mpak.decode(payload)
+            return mpak.decode(Buffer.from(payload))
         } catch (e) {
             console.error('MessagePack decoding error', e)
             throw e
