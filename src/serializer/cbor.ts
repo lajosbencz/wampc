@@ -1,4 +1,4 @@
-import { decode, encode } from 'cbor'
+import cbor from 'cbor'
 import Serializer, { SerializerType } from '../serializer'
 
 export class CborSerializer implements Serializer {
@@ -13,7 +13,7 @@ export class CborSerializer implements Serializer {
         return new Promise((resolve, reject) => {
             try {
                 // @ts-ignore
-                resolve(encode(obj))
+                resolve(cbor.encode(obj))
             } catch (e) {
                 console.error('Cbor encoding error: ', e)
                 reject(e)
@@ -25,7 +25,7 @@ export class CborSerializer implements Serializer {
         return new Promise<any>((resolve, reject) => {
             try {
                 // @ts-ignore
-                resolve(decode(payload))
+                resolve(cbor.decode(payload))
             } catch (e) {
                 console.error('Cbor decoding error', e)
                 reject(e)
