@@ -1,6 +1,7 @@
 import dts from 'rollup-plugin-dts'
 import esbuild from 'rollup-plugin-esbuild'
 import del from 'rollup-plugin-delete'
+import alias from '@rollup/plugin-alias'
 
 // const name = require('./package.json').main.replace(/\.js$/, '')
 const name = require('./package.json').name
@@ -15,7 +16,7 @@ const buildDir = 'dist/'
 
 export default [
   bundle({
-    plugins: [esbuild(), del({ targets: `${buildDir}**` })],
+    plugins: [esbuild(), alias({entries:[{find:'cbor', replacement:'cbor-web'}]}), del({ targets: `${buildDir}cjs/**` })],
     output: [
       {
         exports: 'named',
@@ -25,6 +26,11 @@ export default [
         format: 'cjs',
         sourcemap: true,
       },
+    ],
+  }),
+  bundle({
+    plugins: [esbuild(), del({ targets: `${buildDir}mjs/**` })],
+    output: [
       {
         exports: 'named',
         inlineDynamicImports: false,
