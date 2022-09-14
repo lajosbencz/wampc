@@ -1,6 +1,7 @@
 import { encode, decode } from 'cbor-x'
 import { ArrayOrObject } from '../types'
 import Serializer, { SerializerType } from '../serializer'
+import {Buffer} from "buffer"
 
 export class CborSerializer implements Serializer {
     type: SerializerType = SerializerType.Cbor
@@ -18,8 +19,7 @@ export class CborSerializer implements Serializer {
 
     unserialize(payload: string): ArrayOrObject {
         try {
-            // @ts-ignore
-            return decode(payload)
+            return decode(Buffer.from(payload))
         } catch (e) {
             console.error('Cbor decoding error', e)
             throw e
