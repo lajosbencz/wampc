@@ -20,7 +20,8 @@ export class MsgpackSerializer implements Serializer {
 
     unserialize(payload: string): ArrayOrObject {
         try {
-            return mpak.decode(Buffer.from(payload))
+            // @ts-ignore
+            return mpak.decode(payload)
         } catch (e) {
             console.error('MessagePack decoding error', e)
             throw e

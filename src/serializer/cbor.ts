@@ -18,7 +18,8 @@ export class CborSerializer implements Serializer {
 
     unserialize(payload: string): ArrayOrObject {
         try {
-            return decode(Buffer.from(payload))
+            // @ts-ignore
+            return decode(payload)
         } catch (e) {
             console.error('Cbor decoding error', e)
             throw e
