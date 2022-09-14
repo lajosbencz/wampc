@@ -1,7 +1,7 @@
 import msgpack from 'msgpack5'
 import { ArrayOrObject } from '../types'
 import Serializer, { SerializerType } from '../serializer'
-import {Buffer} from 'buffer/'
+import { Buffer } from 'buffer/'
 
 const mpak = msgpack({ forceFloat64: true })
 
