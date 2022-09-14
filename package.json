@@ -32,7 +32,7 @@
     "websocket-polyfill": "^0.0.3"
   },
   "optionalDependencies": {
-    "cbor-x": "^1.4.0",
+    "cbor": "^8.1.0",
     "events": "^3.3.0",
     "msgpack5": "^6.0.2"
   },

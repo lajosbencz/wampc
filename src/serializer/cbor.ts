@@ -1,4 +1,4 @@
-import { decode, encode } from 'cbor-x'
+import { decode, encode } from 'cbor'
 import Serializer, { SerializerType } from '../serializer'
 
 export class CborSerializer implements Serializer {
