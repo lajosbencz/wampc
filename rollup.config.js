@@ -1,7 +1,10 @@
 import dts from 'rollup-plugin-dts'
 import esbuild from 'rollup-plugin-esbuild'
 import del from 'rollup-plugin-delete'
-import alias from '@rollup/plugin-alias'
+// import alias from '@rollup/plugin-alias'
+import resolve from "@rollup/plugin-node-resolve"
+import commonjs from "@rollup/plugin-commonjs"
+import nodePolyfills from "rollup-plugin-polyfill-node"
 
 // const name = require('./package.json').main.replace(/\.js$/, '')
 const name = require('./package.json').name
@@ -16,7 +19,14 @@ const buildDir = 'dist/'
 
 export default [
   bundle({
-    plugins: [esbuild(), alias({entries:[{find:'cbor', replacement:'cbor-web'}]}), del({ targets: `${buildDir}cjs/**` })],
+    plugins: [
+      del({targets: `${buildDir}cjs/**`}),
+      nodePolyfills({
+        include: ['dist/**', 'node_modules/**'],
+      }),
+      resolve({browser: true}),
+      esbuild()
+    ],
     output: [
       {
         exports: 'named',
@@ -26,10 +36,28 @@ export default [
         format: 'cjs',
         sourcemap: true,
       },
+      {
+        exports: 'named',
+        name: 'wampc',
+        inlineDynamicImports: true,
+        // file: `${name}.js`,
+        dir: `${buildDir}umd/${name}`,
+        format: 'umd',
+        sourcemap: true,
+        globals: {
+          'es6-deferred-promise': 'es6DeferredPromise',
+          'msgpack5': 'msgpack5',
+          'cbor': 'cbor',
+          'events': 'EventEmitter',
+        },
+      },
     ],
   }),
   bundle({
-    plugins: [esbuild(), del({ targets: `${buildDir}mjs/**` })],
+    plugins: [
+      del({targets: `${buildDir}mjs/**`}),
+      esbuild(),
+    ],
     output: [
       {
         exports: 'named',
@@ -42,7 +70,10 @@ export default [
     ],
   }),
   bundle({
-    plugins: [dts(), del({ targets: `${buildDir}ts/**` })],
+    plugins: [
+      del({targets: `${buildDir}ts/**`}),
+      dts(),
+    ],
     output: {
       exports: 'named',
       inlineDynamicImports: false,
