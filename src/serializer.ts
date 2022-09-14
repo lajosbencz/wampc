@@ -10,8 +10,8 @@ export enum SerializerType {
 export default interface Serializer {
     type: SerializerType
     isBinary: boolean
-    serialize: (obj: ArrayOrObject) => string
-    unserialize: (payload: string) => ArrayOrObject
+    serialize: (obj: any) => Promise<string>
+    unserialize: (payload: string) => Promise<any>
 }
 
 export async function serializerFromProtocol(

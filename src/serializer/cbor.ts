@@ -1,29 +1,36 @@
-import { encode, decode } from 'cbor-x'
-import { ArrayOrObject } from '../types'
+import { decode, encode } from 'cbor-x'
 import Serializer, { SerializerType } from '../serializer'
-import { Buffer } from 'buffer/'
 
 export class CborSerializer implements Serializer {
-    type: SerializerType = SerializerType.Cbor
-    isBinary: boolean = true
-
-    serialize(obj: ArrayOrObject): string {
-        try {
-            // @ts-ignore
-            return encode(obj)
-        } catch (e) {
-            console.error('Cbor encoding error', e)
-            throw e
-        }
+    get type(): SerializerType {
+        return SerializerType.Cbor
+    }
+    get isBinary(): boolean {
+        return true
     }
 
-    unserialize(payload: string): ArrayOrObject {
-        try {
-            return decode(Buffer.from(payload))
-        } catch (e) {
-            console.error('Cbor decoding error', e)
-            throw e
-        }
+    async serialize(obj: any): Promise<string> {
+        return new Promise((resolve, reject) => {
+            try {
+                // @ts-ignore
+                resolve(encode(obj))
+            } catch (e) {
+                console.error('Cbor encoding error: ', e)
+                reject(e)
+            }
+        })
+    }
+
+    async unserialize(payload: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            try {
+                // @ts-ignore
+                resolve(decode(payload))
+            } catch (e) {
+                console.error('Cbor decoding error', e)
+                reject(e)
+            }
+        })
     }
 }
 

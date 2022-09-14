@@ -44,11 +44,11 @@ export default class RawSocketTransport
             this._deferred_open.resolve(evt)
         })
 
-        protocol.on('data', (raw) => {
-            const data = this._serializer.unserialize(raw)
+        protocol.on('data', async (raw) => {
+            const data = await this._serializer.unserialize(raw)
             console.log('<', data)
             const msg = MessageFromArray(data as any[])
-            this.onMessage(msg).catch(console.error)
+            await this.onMessage(msg)
         })
 
         protocol.on('close', (hadError) => {
@@ -80,8 +80,8 @@ export default class RawSocketTransport
         return await this._deferred_close.promise
     }
 
-    send(data: ArrayOrObject): void {
+    async send(data: ArrayOrObject): Promise<void> {
         console.log('>', data)
-        this._protocol?.write(this._serializer.serialize(data))
+        this._protocol?.write(await this._serializer.serialize(data))
     }
 }

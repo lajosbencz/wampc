@@ -222,7 +222,7 @@ export default class Connection {
                         signature[1]
                     )
                 }
-                this.send(authMsg)
+                await this.send(authMsg)
             } catch (e) {
                 console.error('onchallenge() raised: ', e)
                 const aborMsg = new AbortMessage(
@@ -232,7 +232,7 @@ export default class Connection {
                     },
                     'wamp.error.cannot_authenticate'
                 )
-                this.send(aborMsg)
+                await this.send(aborMsg)
                 await this.close(3000, '')
             }
         } else {
@@ -240,7 +240,7 @@ export default class Connection {
                 'received WAMP challenge, but no onchallenge() handler set'
             )
             console.error(err)
-            this.send(
+            await this.send(
                 new AbortMessage(
                     {
                         message:
@@ -253,10 +253,10 @@ export default class Connection {
         }
     }
 
-    protected _processGoodbye(msg: GoodbyeMessage): void {
+    protected async _processGoodbye(msg: GoodbyeMessage): Promise<void> {
         if (!this._goodbye_sent) {
             const byeMsg = new GoodbyeMessage({}, 'wamp.error.goodbye_and_out')
-            this.send(byeMsg)
+            await this.send(byeMsg)
         }
         this._session.id = -1
         this._client.onLeave(msg.reason, msg.details)
@@ -523,14 +523,14 @@ export default class Connection {
             const kwArgs = msg.kwArgs
             let progress = null
             if (details?.receive_progress === true) {
-                progress = (args?: Args, kwArgs?: KwArgs) => {
+                progress = async (args?: Args, kwArgs?: KwArgs) => {
                     const msgYield = new YieldMessage(
                         requestId,
                         { progress: true },
                         args,
                         kwArgs
                     )
-                    this.send(msgYield)
+                    await this.send(msgYield)
                 }
             }
             const inv = new WampInvocation(
@@ -566,7 +566,7 @@ export default class Connection {
                     yieldArgs,
                     yieldKwArgs
                 )
-                this.send(msgYield)
+                await this.send(msgYield)
             } catch (e) {
                 let err
                 if (!(e instanceof WampError)) {
@@ -582,7 +582,7 @@ export default class Connection {
                     err?.args ?? [],
                     err?.kwArgs
                 )
-                this.send(msgError)
+                await this.send(msgError)
                 console.error('Exception raised in invocation handler:', err)
             }
         } else {
@@ -686,21 +686,15 @@ export default class Connection {
             console.log(msg)
             await this._processMessage(msg)
         }
-        return await new Promise<Event>((resolve, reject) => {
-            this.transport
-                .open()
-                .then((evtOpen) => {
-                    this._opened = true
-                    const msg = new HelloMessage(this._session.realm, {
-                        roles: Features,
-                        authmethods: this._options.authmethods,
-                        authid: this._options.authid,
-                    })
-                    this.send(msg)
-                    resolve(evtOpen)
-                })
-                .catch(reject)
+        const evtOpen = await this.transport.open()
+        this._opened = true
+        const msg = new HelloMessage(this._session.realm, {
+            roles: Features,
+            authmethods: this._options.authmethods,
+            authid: this._options.authid,
         })
+        await this.send(msg)
+        return evtOpen
     }
 
     public async close(code?: number, reason?: string): Promise<CloseEvent> {
@@ -710,9 +704,9 @@ export default class Connection {
         return await this.transport.close(code, reason)
     }
 
-    public send(msg: Message): void {
+    public async send(msg: Message): Promise<void> {
         console.log(msg)
-        this.transport.send(msg.asArray())
+        await this.transport.send(msg.asArray())
     }
 
     public async leave(reason?: string, message?: string): Promise<string> {
@@ -722,7 +716,7 @@ export default class Connection {
             details.message = message
         }
         const msg = new GoodbyeMessage(details, reason)
-        this.send(msg)
+        await this.send(msg)
         this._goodbye_sent = true
         this._deferred_leave = new Deferred<string>()
         return await this._deferred_leave.promise
@@ -747,11 +741,11 @@ export default class Connection {
         const d = new Deferred<any>()
         this._call_reqs.set(requestId, [d, options])
         const msg = new CallMessage(requestId, options, rpc, args, kwArgs)
-        this.send(msg)
+        await this.send(msg)
         const promise = asCancelablePromise(d.promise)
-        promise.cancel = (cancelOptions?: KwArgs) => {
+        promise.cancel = async (cancelOptions?: KwArgs): Promise<void> => {
             const msg = new CancelMessage(requestId, cancelOptions ?? {})
-            this.send(msg)
+            await this.send(msg)
             if (
                 this._call_reqs.has(requestId) &&
                 (cancelOptions == null ||

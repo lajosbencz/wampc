@@ -34,7 +34,6 @@
   "optionalDependencies": {
     "cbor-x": "^1.4.0",
     "events": "^3.3.0",
-    "buffer": "^6.0.3",
     "msgpack5": "^6.0.2"
   },
   "devDependencies": {

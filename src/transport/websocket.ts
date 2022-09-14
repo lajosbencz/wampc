@@ -26,11 +26,11 @@ export default class WebSocketTransport
             )
             this._deferred_open?.resolve(evt)
         }
-        ws.onmessage = (evt: MessageEvent) => {
-            const data = this._serializer.unserialize(evt.data)
+        ws.onmessage = async (evt: MessageEvent) => {
+            const data = await this._serializer.unserialize(evt.data)
             console.log('<', data)
             const msg = MessageFromArray(data as any[])
-            this.onMessage(msg).catch(console.error)
+            await this.onMessage(msg)
         }
         ws.onerror = (evt: any) => {
             this._deferred_open?.reject(evt.error)
@@ -53,8 +53,8 @@ export default class WebSocketTransport
         return await this._deferred_close.promise
     }
 
-    send(data: ArrayOrObject): void {
+    async send(data: ArrayOrObject): Promise<void> {
         console.log('>', data)
-        this._ws?.send(this._serializer.serialize(data))
+        this._ws?.send(await this._serializer.serialize(data))
     }
 }

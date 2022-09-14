@@ -1,32 +1,48 @@
-import msgpack from 'msgpack5'
-import { ArrayOrObject } from '../types'
+import msgpack5 from 'msgpack5'
 import Serializer, { SerializerType } from '../serializer'
-import { Buffer } from 'buffer/'
 
-const mpak = msgpack({ forceFloat64: true })
+//const msgpack = msgpack5({ forceFloat64: true })
+const msgpack = msgpack5()
 
 export class MsgpackSerializer implements Serializer {
-    type: SerializerType = SerializerType.MsgPack
-    isBinary: boolean = true
-
-    serialize(obj: ArrayOrObject): string {
-        try {
-            // @ts-ignore
-            return mpak.encode(obj)
-        } catch (e) {
-            console.error('MessagePack encoding error', e)
-            throw e
-        }
+    get type(): SerializerType {
+        return SerializerType.MsgPack
+    }
+    get isBinary(): boolean {
+        return true
     }
 
-    unserialize(payload: string): ArrayOrObject {
-        try {
-            // @ts-ignore
-            return mpak.decode(Buffer.from(payload))
-        } catch (e) {
-            console.error('MessagePack decoding error', e)
-            throw e
-        }
+    async serialize(obj: any): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            try {
+                // @ts-ignore
+                resolve(msgpack.encode(obj))
+            } catch (e) {
+                reject(e)
+            }
+        })
+    }
+
+    async unserialize(payload: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            try {
+                const type = payload.constructor.name
+                if (type === 'ArrayBuffer' || type === 'Buffer') {
+                    // @ts-ignore
+                    resolve(msgpack.decode(new Uint8Array(payload)))
+                } else {
+                    const reader = new FileReader()
+                    reader.onload = function () {
+                        // @ts-ignore
+                        resolve(msgpack.decode(new Uint8Array(this.result)))
+                    }
+                    // @ts-ignore
+                    reader.readAsArrayBuffer(payload)
+                }
+            } catch (e) {
+                reject(e)
+            }
+        })
     }
 }
 
