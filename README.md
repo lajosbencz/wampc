@@ -3,6 +3,8 @@
 # wampc
 #### Web Application Messaging Protocol Client
 
+TypeScript client for [WAMP2](https://wamp-proto.org/)
+
 ## Supported protocols
  - JSON (native) as default
  - CBOR ([cbor-x](https://github.com/kriszyp/cbor-x))
