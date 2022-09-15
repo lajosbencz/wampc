@@ -26,7 +26,7 @@ export default class WebSocketTransport extends Transport implements Transporter
         };
         ws.onmessage = async (evt: MessageEvent) => {
             const data = await this._serializer.unserialize(evt.data);
-            console.log('<', data);
+            // console.log('<', data);
             const msg = MessageFromArray(data as any[]);
             await this.onMessage(msg);
         };
@@ -52,7 +52,7 @@ export default class WebSocketTransport extends Transport implements Transporter
     }
 
     async send(data: ArrayOrObject): Promise<void> {
-        console.log('>', data);
+        // console.log('>', data);
         this._ws?.send(await this._serializer.serialize(data));
     }
 }

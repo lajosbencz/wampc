@@ -591,7 +591,7 @@ export default class Connection {
         });
         this._transport = await transportFromUri(transportOptions.url, transportOptions);
         this._transport.onMessage = async (msg: Message) => {
-            console.log(msg);
+            // console.log(msg);
             await this._processMessage(msg);
         };
         const evtOpen = await this.transport.open();
@@ -613,7 +613,7 @@ export default class Connection {
     }
 
     public async send(msg: Message): Promise<void> {
-        console.log(msg);
+        // console.log(msg);
         await this.transport.send(msg.asArray());
     }
 

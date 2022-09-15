@@ -35,19 +35,19 @@ export default class RawSocketTransport extends Transport implements Transporter
         } as ProtocolOptions);
 
         protocol.on('connect', evt => {
-            console.log('RawSocket transport negotiated');
+            // console.log('RawSocket transport negotiated');
             this._deferred_open.resolve(evt);
         });
 
         protocol.on('data', async raw => {
             const data = await this._serializer.unserialize(raw);
-            console.log('<', data);
+            // console.log('<', data);
             const msg = MessageFromArray(data as any[]);
             await this.onMessage(msg);
         });
 
         protocol.on('close', hadError => {
-            console.log('RawSocket transport closed');
+            // console.log('RawSocket transport closed');
             this._deferred_close?.resolve({
                 code: 999,
                 reason: '',
@@ -76,7 +76,7 @@ export default class RawSocketTransport extends Transport implements Transporter
     }
 
     async send(data: ArrayOrObject): Promise<void> {
-        console.log('>', data);
+        // console.log('>', data);
         this._protocol?.write(await this._serializer.serialize(data));
     }
 }
