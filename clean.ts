@@ -1,24 +1,24 @@
-const fs = require('fs')
+import { existsSync, readdirSync, lstatSync, unlinkSync, rmdirSync, mkdirSync } from 'fs';
 
-let [path] = process.argv.slice(2)
-path = path ?? './dist'
+let [path] = process.argv.slice(2);
+path = path ?? './dist';
 
 function deleteFolderRecursive(path: string) {
-    if (fs.existsSync(path) && fs.lstatSync(path).isDirectory()) {
-        fs.readdirSync(path).forEach(function (file: string, index: number) {
-            const curPath = path + "/" + file
-            if (fs.lstatSync(curPath).isDirectory()) {
-                deleteFolderRecursive(curPath)
+    if (existsSync(path) && lstatSync(path).isDirectory()) {
+        readdirSync(path).forEach(function(file: string) {
+            const curPath = path + '/' + file;
+            if (lstatSync(curPath).isDirectory()) {
+                deleteFolderRecursive(curPath);
             } else {
-                fs.unlinkSync(curPath)
+                unlinkSync(curPath);
             }
-        })
-        console.log(`Deleting directory "${path}"...`)
-        fs.rmdirSync(path)
+        });
+        console.log(`Deleting directory "${path}"...`);
+        rmdirSync(path);
     }
 }
 
-console.log("Cleaning working tree...")
-deleteFolderRecursive(path)
-fs.mkdirSync(path)
-console.log("Cleaned working tree!")
+console.log('Cleaning working tree...');
+deleteFolderRecursive(path);
+mkdirSync(path);
+console.log('Cleaned working tree!');
