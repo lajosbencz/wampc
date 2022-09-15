@@ -1,6 +1,6 @@
 {
   "name": "wampc",
-  "version": "0.2.12",
+  "version": "0.2.13",
   "description": "Web Application Messaging Protocol Client",
   "scripts": {
     "lint": "eslint --ext .ts ./src ./index.ts",
