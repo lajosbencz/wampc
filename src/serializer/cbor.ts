@@ -1,5 +1,6 @@
 import { encode, decode } from 'cborg';
 import Serializer, { SerializerType } from '../serializer';
+import Buffer from '../buffer';
 
 export class CborSerializer implements Serializer {
     get type(): SerializerType {

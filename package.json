@@ -33,6 +33,7 @@
     "websocket-polyfill": "^0.0.3"
   },
   "optionalDependencies": {
+    "buffer": "^6.0.3",
     "@msgpack/msgpack": "^2.8.0",
     "cborg": "^1.9.5",
     "events": "^3.3.0"
