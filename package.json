@@ -29,10 +29,10 @@
     "dist/**/*"
   ],
   "dependencies": {
-    "es6-deferred-promise": "^1.0.1",
-    "isomorphic-ws": "^5.0.0"
+    "es6-deferred-promise": "^1.0.1"
   },
   "optionalDependencies": {
+    "websocket-polyfill": "^0.0.3",
     "@msgpack/msgpack": "^2.8.0",
     "cbor-x": "^1.4.0",
     "events": "^3.3.0"
