@@ -1,11 +1,3 @@
-const isNode = new Function('try {return this===global;}catch(e){return false;}');
+import { Buffer } from 'buffer/';
 
-let bfr: typeof Buffer;
-if (isNode) {
-    bfr = Buffer;
-} else {
-    const { Buffer } = require('buffer/');
-    bfr = Buffer;
-}
-
-export default bfr;
+export default Buffer;
