@@ -1,4 +1,4 @@
-import { Deferred } from 'es6-deferred-promise';
+import Deferred from './deferred';
 import Client from './client';
 import Features from './protocol/features';
 import Message, { MessageType } from './protocol/message';

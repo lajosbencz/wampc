@@ -1,4 +1,4 @@
-import { Deferred } from 'es6-deferred-promise';
+import Deferred from './deferred';
 import Message from './protocol/message';
 import { ProtocolType } from './protocol';
 import type Serializer from './serializer';

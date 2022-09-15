@@ -31,13 +31,12 @@
     "dist/**/*"
   ],
   "dependencies": {
-    "es6-deferred-promise": "^1.0.1"
+    "events": "^3.3.0",
+    "websocket-polyfill": "^0.0.3"
   },
   "optionalDependencies": {
-    "websocket-polyfill": "^0.0.3",
     "@msgpack/msgpack": "^2.8.0",
-    "cbor-x": "^1.4.0",
-    "events": "^3.3.0"
+    "cbor-x": "^1.4.0"
   },
   "devDependencies": {
     "@types/jest": "^29.0.2",

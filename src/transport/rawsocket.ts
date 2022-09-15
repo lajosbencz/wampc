@@ -3,7 +3,7 @@ import { Transport, Transporter } from '../transport';
 import Message from '../protocol/message';
 import { MessageFromArray } from '../protocol/message_util';
 import { Protocol, ProtocolOptions } from './rawsocket/protocol';
-import { Deferred } from 'es6-deferred-promise';
+import Deferred from '../deferred';
 
 export default class RawSocketTransport extends Transport implements Transporter {
     protected _protocol?: Protocol;

@@ -1,5 +1,4 @@
-import { Deferred } from 'es6-deferred-promise';
-import 'websocket-polyfill';
+import Deferred from '../deferred';
 import Message from '../protocol/message';
 import { MessageFromArray } from '../protocol/message_util';
 import type { ProtocolType } from '../protocol';

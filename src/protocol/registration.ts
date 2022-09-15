@@ -1,7 +1,7 @@
 import Connection from '../connection';
 import type { Args, KwArgs } from '../types';
 import Result from './result';
-import { Deferred } from 'es6-deferred-promise';
+import Deferred from '../deferred';
 
 export default class Registration {
     procedure: string = '';
