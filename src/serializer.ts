@@ -9,8 +9,34 @@ export enum SerializerType {
 export default interface Serializer {
     type: SerializerType;
     isBinary: boolean;
-    serialize: (obj: any) => Promise<string>;
-    unserialize: (payload: string) => Promise<any>;
+    serialize: (obj: any) => Promise<any>;
+    unserialize: (payload: any) => Promise<any>;
+}
+
+export class BinarySerializer {
+    encode: (d: any) => any = () => {};
+    decode: (d: any) => any = () => {};
+    get isBinary(): boolean {
+        return true;
+    }
+    async serialize(d: any): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            try {
+                resolve(this.encode(d));
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
+    async unserialize(payload: any): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            try {
+                resolve(this.decode(payload));
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
 }
 
 export async function serializerFromProtocol(p: ProtocolType): Promise<Serializer> {

@@ -8,8 +8,8 @@ export class JsonSerializer implements Serializer {
         return false;
     }
 
-    serialize(obj: any): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
+    serialize(obj: any): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
             try {
                 resolve(JSON.stringify(obj));
             } catch (e) {
@@ -18,8 +18,8 @@ export class JsonSerializer implements Serializer {
         });
     }
 
-    unserialize(payload: string): Promise<any> {
-        return new Promise((resolve, reject) => {
+    unserialize(payload: any): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
             try {
                 resolve(JSON.parse(payload));
             } catch (e) {

@@ -19,6 +19,9 @@ export default class WebSocketTransport extends Transport implements Transporter
         const ws = new WebSocket(this._options.url, this._options.protocols);
         ws.onopen = async (evt: Event) => {
             this._serializer = await serializerFromProtocol(ws.protocol as ProtocolType);
+            if (this._serializer.isBinary) {
+                ws.binaryType = 'arraybuffer';
+            }
             this._deferred_open?.resolve(evt);
         };
         ws.onmessage = async (evt: MessageEvent) => {
