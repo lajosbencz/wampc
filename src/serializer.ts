@@ -32,7 +32,7 @@ export class BinarySerializer {
     unserialize(data: any): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             try {
-                resolve(decode(data))
+                resolve(this.decode(data))
             }
             catch(e) {
                 reject(e);
