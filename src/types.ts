@@ -1,17 +1,17 @@
-export type Nullable<T> = T | undefined | null
+export type Nullable<T> = T | undefined | null;
 
-export type ArrayOrObject = Args | KwArgs
+export type ArrayOrObject = Args | KwArgs;
 
 export interface Dictionary<T> {
-    [x: string]: T
+    [x: string]: T;
 }
 export interface NestedDictionary<T> {
-    [x: string]: NestedDictionary<T> | T
+    [x: string]: NestedDictionary<T> | T;
 }
 
-export type Args = any[]
+export type Args = any[];
 export interface KwArgs {
-    [key: string]: any
+    [key: string]: any;
 }
 
-export type TodoType = any
+export type TodoType = any;

@@ -1,7 +1,7 @@
 export default class Publication {
-    id: number
+    id: number;
 
     constructor(id: number) {
-        this.id = id
+        this.id = id;
     }
 }

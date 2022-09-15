@@ -1,16 +1,16 @@
-import Message, { MessageType } from '../message'
-import { KwArgs, Nullable } from '../../types'
+import Message, { MessageType } from '../message';
+import type { KwArgs, Nullable } from '../../types';
 
 export default class ChallengeMessage extends Message {
     constructor(authmethod: string, extra?: KwArgs) {
-        super(MessageType.CHALLENGE, authmethod, extra ?? {})
+        super(MessageType.CHALLENGE, authmethod, extra ?? {});
     }
 
     public get authmethod(): string {
-        return this._args[0]
+        return this._args[0];
     }
 
     public get extra(): Nullable<KwArgs> {
-        return this._args[1]
+        return this._args[1];
     }
 }

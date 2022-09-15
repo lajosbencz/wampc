@@ -1,4 +1,4 @@
-import { TodoType } from '../types'
+import type { TodoType } from '../types';
 
 export enum MessageType {
     HELLO = 1,
@@ -29,29 +29,29 @@ export enum MessageType {
 
 export function MessageAppendArgsKwArgs(m: TodoType, a: any[]): void {
     if (m.args !== undefined) {
-        a.push(m.args)
+        a.push(m.args);
         if (m.kwArgs !== undefined) {
-            a.push(m.kwArgs)
+            a.push(m.kwArgs);
         }
     } else if (m.kwArgs !== undefined) {
-        a.push([])
-        a.push(m.kwArgs)
+        a.push([]);
+        a.push(m.kwArgs);
     }
 }
 
 export default class Message {
-    protected _type: MessageType
-    protected _args: any[]
+    protected _type: MessageType;
+    protected _args: any[];
     public constructor(type: MessageType, ...args: any) {
-        this._type = type
-        this._args = args
+        this._type = type;
+        this._args = args;
     }
 
     public getType(): MessageType {
-        return this._type
+        return this._type;
     }
 
     public asArray(): any[] {
-        return [this._type, ...this._args]
+        return [this._type, ...this._args];
     }
 }

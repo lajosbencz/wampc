@@ -1,16 +1,16 @@
-import Message, { MessageType } from '../message'
-import { KwArgs } from '../../types'
+import Message, { MessageType } from '../message';
+import type { KwArgs } from '../../types';
 
 export default class CancelMessage extends Message {
     constructor(requestId: number, options: KwArgs) {
-        super(MessageType.CANCEL, requestId, options)
+        super(MessageType.CANCEL, requestId, options);
     }
 
     public get request_id(): number {
-        return this._args[0]
+        return this._args[0];
     }
 
     public get options(): KwArgs {
-        return this._args[1]
+        return this._args[1];
     }
 }

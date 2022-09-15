@@ -1,5 +1,4 @@
-import { ProtocolType } from './protocol'
-import { ArrayOrObject } from './types'
+import { ProtocolType } from './protocol';
 
 export enum SerializerType {
     Json = 'json',
@@ -8,26 +7,21 @@ export enum SerializerType {
 }
 
 export default interface Serializer {
-    type: SerializerType
-    isBinary: boolean
-    serialize: (obj: any) => Promise<string>
-    unserialize: (payload: string) => Promise<any>
+    type: SerializerType;
+    isBinary: boolean;
+    serialize: (obj: any) => Promise<string>;
+    unserialize: (payload: string) => Promise<any>;
 }
 
-export async function serializerFromProtocol(
-    p: ProtocolType
-): Promise<Serializer> {
+export async function serializerFromProtocol(p: ProtocolType): Promise<Serializer> {
     switch (p) {
         case ProtocolType.Wamp2Json:
-            return (await import('./serializer/json'))
-                .default as unknown as Serializer
+            return (await import('./serializer/json')).default as unknown as Serializer;
         case ProtocolType.Wamp2Msgpack:
-            return (await import('./serializer/msgpack'))
-                .default as unknown as Serializer
+            return (await import('./serializer/msgpack')).default as unknown as Serializer;
         case ProtocolType.Wamp2Cbor:
-            return (await import('./serializer/cbor'))
-                .default as unknown as Serializer
+            return (await import('./serializer/cbor')).default as unknown as Serializer;
         default:
-            throw new Error(`unknown protocol: ${p}`)
+            throw new Error(`unknown protocol: ${p}`);
     }
 }

@@ -1,4 +1,4 @@
-import { TodoType } from '../types'
+import type { TodoType } from '../types';
 
 const Features: TodoType = {
     caller: {
@@ -37,6 +37,6 @@ const Features: TodoType = {
             // event_history: true,
         },
     },
-}
+};
 
-export default Features
+export default Features;

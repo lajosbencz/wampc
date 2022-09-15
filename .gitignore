@@ -1,5 +1,9 @@
+.DS_Store
+.cache/
+.vscode/
 .idea/
 dist/
 example/
+coverage/
 node_modules/
 package-lock.json

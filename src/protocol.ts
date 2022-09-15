@@ -4,4 +4,4 @@ enum ProtocolType {
     Wamp2Cbor = 'wamp.2.cbor',
 }
 
-export { ProtocolType }
+export { ProtocolType };
