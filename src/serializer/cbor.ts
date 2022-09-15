@@ -10,6 +10,19 @@ export class CborSerializer extends BinarySerializer implements Serializer {
     get type(): SerializerType {
         return SerializerType.Cbor;
     }
+    override unserialize(data: any): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            try {
+                if(data instanceof ArrayBuffer) {
+                    resolve(this.decode(new Uint8Array(data)));
+                } else {
+                    resolve(this.decode(data));
+                }
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
 }
 
 export default new CborSerializer();
