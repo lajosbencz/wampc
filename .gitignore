@@ -3,6 +3,7 @@
 .vscode/
 .idea/
 dist/
+bundle/
 example/
 coverage/
 node_modules/

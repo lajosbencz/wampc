@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    // # Project Options
+    // "allowJs": true,
+    // "checkJs": true,
+    "lib": [
+      "DOM",
+      "ES5",
+      "ES6"
+    ],
+    "module": "AMD",
+    "outFile": "bundle/wampc.js",
+    "target": "ES5",
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "declaration": true,
+    "sourceMap": true,
+    // # Strict Checks
+    // "strict": true,
+    // # Module Resolution
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "paths": {
+      "~/*": [
+        "*"
+      ]
+    },
+    // # Advanced
+    // "forceConsistentCasingInFileNames": true,
+    // "resolveJsonModule": true,
+    // "skipLibCheck": true
+  },
+  "include": [
+    "src/**/*",
+    "index.ts",
+  ],
+  "exclude": [
+    "dist",
+    "coverage",
+    "demo",
+    "node_modules",
+    "src/**/*.test.ts"
+  ]
+}
