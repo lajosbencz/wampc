@@ -13,7 +13,7 @@ export class CborSerializer extends BinarySerializer implements Serializer {
     override unserialize(data: any): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             try {
-                if(data instanceof ArrayBuffer) {
+                if (data instanceof ArrayBuffer) {
                     resolve(this.decode(new Uint8Array(data)));
                 } else {
                     resolve(this.decode(data));
