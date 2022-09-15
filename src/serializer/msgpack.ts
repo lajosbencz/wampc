@@ -10,6 +10,19 @@ export class MsgpackSerializer extends BinarySerializer implements Serializer {
         this.encode = encode;
         this.decode = decode;
     }
+    public override unserialize(data: any): Promise<any> {
+        return new Promise<any>(resolve => {
+            if(data instanceof ArrayBuffer || data instanceof Buffer) {
+                resolve(decode(new Uint8Array(data)));
+            } else {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    resolve(decode(new Uint8Array(this.result as ArrayBuffer)));
+                };
+                reader.readAsArrayBuffer(data);
+            }
+        });
+    }
 }
 
 export default new MsgpackSerializer();
