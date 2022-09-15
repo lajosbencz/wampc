@@ -9,8 +9,9 @@
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "prebuild": "npm run format && npm run test && npx ts-node clean.ts ./dist",
     "build": "tsc",
+    "bump": "npm version patch",
     "prerelease": "npm run build",
-    "release": "npm publish"
+    "release": "npm run bump && npm publish"
   },
   "keywords": [
     "wamp",
