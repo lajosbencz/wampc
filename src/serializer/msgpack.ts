@@ -1,5 +1,6 @@
 import { encode, decode } from '@msgpack/msgpack';
 import Serializer, { SerializerType } from '../serializer';
+import Buffer from '../buffer';
 
 export class MsgpackSerializer implements Serializer {
     get type(): SerializerType {
