@@ -31,7 +31,7 @@ export class BinarySerializer {
     }
     unserialize(data: any): Promise<any> {
         return new Promise<any>(resolve => {
-            if(data instanceof ArrayBuffer || data instanceof Buffer) {
+            if (data instanceof ArrayBuffer || data instanceof Buffer) {
                 resolve(decode(new Uint8Array(data)));
             } else {
                 const reader = new FileReader();
