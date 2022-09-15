@@ -13,7 +13,8 @@ export class CborSerializer implements Serializer {
     async serialize(obj: any): Promise<string> {
         return new Promise((resolve, reject) => {
             try {
-                resolve(Buffer.from(encode(obj)).toString());
+                // @ts-ignore
+                resolve(encode(obj));
             } catch (e) {
                 reject(e);
             }

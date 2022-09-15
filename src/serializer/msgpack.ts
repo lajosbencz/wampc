@@ -10,10 +10,11 @@ export class MsgpackSerializer implements Serializer {
         return true;
     }
 
-    async serialize(obj: any): Promise<string> {
+    async serialize(obj: any): Promise<string|Uint8Array> {
         return new Promise<string>((resolve, reject) => {
             try {
-                resolve(Buffer.from(encode(obj)).toString());
+                // @ts-ignore
+                resolve(encode(obj));
             } catch (e) {
                 reject(e);
             }
