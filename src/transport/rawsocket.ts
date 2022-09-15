@@ -63,7 +63,7 @@ export default class RawSocketTransport extends Transport implements Transporter
 
         this._protocol = protocol;
 
-        // @ts-expect-error: No overload matches this call.
+        // @ts-ignore
         socket.connect(connectionOptions, null);
 
         return await this._deferred_open.promise;

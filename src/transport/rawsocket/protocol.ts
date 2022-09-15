@@ -62,7 +62,7 @@ export class Protocol {
     protected _ping_timeout?: ReturnType<typeof setTimeout>;
     protected _ping_payload: any;
     protected _ping_interval?: ReturnType<typeof setInterval>;
-    protected _autoping_interval?: number;
+    protected _autoping_interval: any;
     protected _status = ProtocolStatus.UNINITIATED;
     protected _stream: Socket;
     protected _emitter: EventEmitter;
