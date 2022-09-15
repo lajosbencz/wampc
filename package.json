@@ -30,12 +30,10 @@
   ],
   "dependencies": {
     "es6-deferred-promise": "^1.0.1",
-    "isomorphic-ws": "^5.0.0",
-    "websocket-polyfill": "^0.0.3"
+    "isomorphic-ws": "^5.0.0"
   },
   "optionalDependencies": {
     "@msgpack/msgpack": "^2.8.0",
-    "buffer": "^6.0.3",
     "cbor-x": "^1.4.0",
     "events": "^3.3.0"
   },
