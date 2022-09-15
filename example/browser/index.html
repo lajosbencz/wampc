@@ -1,0 +1,58 @@
+<!--
+ !REQUIRES a router running at ws://localhost:8951
+ Fire up a local HTTP server with the root pointing to the project root,
+ then open the url: http://localhost:<port>/example/browser/index.html
+-->
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>wampc</title>
+    <script>var exports = {};</script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js'
+            crossorigin='anonymous'
+            integrity='sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg=='></script>
+    <script src='/bundle/wampc.min.js'></script>
+</head>
+<body>
+<button id='disconnectTrigger'>Disconnect</button>
+<pre id='outputContainer'></pre>
+<script>
+    var disconnectTriggerEl = document.getElementById('disconnectTrigger');
+    var outputContainerEl = document.getElementById('outputContainer');
+    var output = function(...args) {
+        console.log(...args);
+        outputContainerEl.innerHTML += JSON.stringify(args) + '\r\n';
+    };
+    require(['index'], function({ Client }) {
+        var con = new Client('ws://localhost:8951', 'default');
+        con.onJoin = function() {
+            output('onJoin');
+        };
+        con.onLeave = function() {
+            output('onLeave');
+        };
+        con.getSession()
+            .then(session => {
+                output('session', session);
+                disconnectTriggerEl.addEventListener('click', function() {
+                    disconnectTriggerEl.setAttribute('disabled', 'disabled');
+                    con.close();
+                });
+                con
+                    .call('dev.echo', [1, 2, 3], { foo: 'bar' }, {})
+                    .then(res => {
+                        output('dev.echo', res);
+                    })
+                    .catch(console.error);
+                con
+                    .subscribe('dev.time', ([time]) => {
+                        output('dev.time', time);
+                    })
+                    .catch(console.error);
+            })
+            .catch(console.error);
+    });
+</script>
+</body>
+</html>
