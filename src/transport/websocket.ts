@@ -6,6 +6,16 @@ import { serializerFromProtocol } from '../serializer';
 import { Transport, Transporter } from '../transport';
 import type { ArrayOrObject } from '../types';
 
+// https://github.com/samchon/tstl/blob/f1d7ae8d17413f07813cf36eef5b378b4f2200a8/src/utility/node.ts
+if (
+    typeof global === 'object' &&
+    typeof global.process === 'object' &&
+    typeof global.process.versions === 'object' &&
+    typeof global.process.versions.node !== 'undefined'
+) {
+    require('websocket-polyfill');
+}
+
 export default class WebSocketTransport extends Transport implements Transporter {
     protected _ws?: WebSocket;
     onMessage: (msg: Message) => Promise<void> = async () => {};
