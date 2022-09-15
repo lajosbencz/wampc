@@ -1,4 +1,5 @@
 import { ProtocolType } from './protocol';
+import { decode } from '@msgpack/msgpack';
 
 export enum SerializerType {
     Json = 'json',
@@ -19,7 +20,7 @@ export class BinarySerializer {
     get isBinary(): boolean {
         return true;
     }
-    async serialize(d: any): Promise<any> {
+    serialize(d: any): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             try {
                 resolve(this.encode(d));
@@ -28,12 +29,16 @@ export class BinarySerializer {
             }
         });
     }
-    async unserialize(payload: any): Promise<any> {
-        return new Promise<any>((resolve, reject) => {
-            try {
-                resolve(this.decode(payload));
-            } catch (e) {
-                reject(e);
+    unserialize(data: any): Promise<any> {
+        return new Promise<any>(resolve => {
+            if(data instanceof ArrayBuffer || data instanceof Buffer) {
+                resolve(decode(new Uint8Array(data)));
+            } else {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    resolve(decode(new Uint8Array(this.result as ArrayBuffer)));
+                };
+                reader.readAsArrayBuffer(data);
             }
         });
     }
