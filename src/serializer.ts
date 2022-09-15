@@ -30,15 +30,12 @@ export class BinarySerializer {
         });
     }
     unserialize(data: any): Promise<any> {
-        return new Promise<any>(resolve => {
-            if (data instanceof ArrayBuffer || data instanceof Buffer) {
-                resolve(decode(new Uint8Array(data)));
-            } else {
-                const reader = new FileReader();
-                reader.onload = function () {
-                    resolve(decode(new Uint8Array(this.result as ArrayBuffer)));
-                };
-                reader.readAsArrayBuffer(data);
+        return new Promise<any>((resolve, reject) => {
+            try {
+                resolve(decode(data))
+            }
+            catch(e) {
+                reject(e);
             }
         });
     }
