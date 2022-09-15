@@ -171,12 +171,12 @@ export default class Connection {
     protected _processWelcome(msg: WelcomeMessage): void {
         this._session.id = msg.session_id;
         this._assignFeatures(msg.details);
-        this._client.onJoin(msg.details);
+        this.onJoin(msg.details);
         this._deferred_session.resolve(this._session);
     }
 
     protected _processAbort(msg: AbortMessage): void {
-        this._client.onLeave(msg.reason, msg.details);
+        this.onLeave(msg.reason, msg.details);
     }
 
     protected async _processChallenge(msg: ChallengeMessage): Promise<void> {
