@@ -12,10 +12,8 @@ export class CborSerializer implements Serializer {
     async serialize(obj: any): Promise<string> {
         return new Promise((resolve, reject) => {
             try {
-                // @ts-ignore
-                resolve(encode(obj));
+                resolve(Buffer.from(encode(obj)).toString());
             } catch (e) {
-                console.error('Cbor encoding error: ', e);
                 reject(e);
             }
         });
@@ -24,10 +22,8 @@ export class CborSerializer implements Serializer {
     async unserialize(payload: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             try {
-                // @ts-ignore
-                resolve(decode(payload));
+                resolve(decode(Buffer.from(payload)));
             } catch (e) {
-                console.error('Cbor decoding error', e);
                 reject(e);
             }
         });
