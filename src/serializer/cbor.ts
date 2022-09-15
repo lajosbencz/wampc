@@ -13,10 +13,14 @@ export class CborSerializer implements Serializer {
     async serialize(obj: any): Promise<string> {
         return new Promise((resolve, reject) => {
             try {
-                // @ts-ignore
-                resolve(encode(obj));
+                const e = encode(obj);
+                console.log('>encoded', e)
+                const b = Buffer.alloc(e.length)
+                b.set(e)
+                console.log('>buffer', b)
+                resolve(b.toString())
             } catch (e) {
-                reject(e);
+                reject(e)
             }
         });
     }
@@ -24,9 +28,13 @@ export class CborSerializer implements Serializer {
     async unserialize(payload: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             try {
-                resolve(decode(Buffer.from(payload)));
+                const b = Buffer.from(payload)
+                console.log('<buffer', b)
+                const d = decode(b)
+                console.log('<decode', d)
+                resolve(d)
             } catch (e) {
-                reject(e);
+                reject(e)
             }
         });
     }

@@ -9,7 +9,7 @@ export enum SerializerType {
 export default interface Serializer {
     type: SerializerType;
     isBinary: boolean;
-    serialize: (obj: any) => Promise<string|Uint8Array>;
+    serialize: (obj: any) => Promise<string>;
     unserialize: (payload: string) => Promise<any>;
 }
 
