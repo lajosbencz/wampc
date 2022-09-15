@@ -21,7 +21,7 @@
   ],
   "author": "Lajos Bencz",
   "license": "MIT",
-  "homepage": "https://github.com/lajosbencz/wampc",
+  "homepage": "https://github.com/lajosbencz/wampc#readme",
   "repository": "https://github.com/lajosbencz/wampc",
   "type": "commonjs",
   "main": "dist/index.js",
