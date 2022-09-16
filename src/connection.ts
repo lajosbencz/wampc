@@ -609,6 +609,7 @@ export default class Connection {
         code = code ?? 0;
         reason = reason ?? 'wamp.close.normal';
         this._deferred_session = new Deferred<Session>();
+        this._opened = false
         return await this.transport.close(code, reason);
     }
 
