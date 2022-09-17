@@ -24,10 +24,8 @@ export const OptionsDefaults = {
 export default class Client {
     protected _connection: Connection;
 
-    public onJoin: (details: KwArgs) => void = () => {
-    };
-    public onLeave: (reason: string, details: KwArgs) => void = () => {
-    };
+    public onJoin: (details: KwArgs) => void = () => {};
+    public onLeave: (reason: string, details: KwArgs) => void = () => {};
 
     constructor(url: string, realm: string, options?: Options) {
         options = Object.assign({}, OptionsDefaults, options ?? {});
