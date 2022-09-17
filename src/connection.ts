@@ -69,7 +69,7 @@ export interface ConnectionOptions {
     protocols?: ProtocolType[];
     authid?: string;
     authmethods?: string[];
-    onchallenge?: (...args: any) => any;
+    onchallenge?: (c: Connection, authmethod: string, extra?: KwArgs) => any|Promise<any>;
     caller_disclose_me?: boolean;
     publisher_disclose_me?: boolean;
 }
@@ -183,7 +183,7 @@ export default class Connection {
         const onchallenge = this._options.onchallenge;
         if (onchallenge != null) {
             try {
-                const signature = await onchallenge(msg.authmethod, msg.extra);
+                const signature = await onchallenge(this, msg.authmethod, msg.extra);
                 let authMsg: AuthenticateMessage;
                 if (typeof signature === 'string') {
                     authMsg = new AuthenticateMessage(signature, {});
