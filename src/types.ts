@@ -14,4 +14,7 @@ export interface KwArgs {
     [key: string]: any;
 }
 
+export type SubscriptionHandler = (args?: Args, kwArgs?: KwArgs, details?: KwArgs) => void
+export type RegistrationCallback = (args?: Args, kwArgs?: KwArgs, details?: KwArgs) => any|Promise<any>
+
 export type TodoType = any;

@@ -1,7 +1,7 @@
 import Connection, { ConnectionOptions, ConnectionOptionsDefaults } from './connection';
 import type { ProtocolType } from './protocol';
 import { SerializerType } from './serializer';
-import type { Args, KwArgs, TodoType } from './types';
+import type { Args, KwArgs, RegistrationCallback, SubscriptionHandler } from './types';
 import Publication from './protocol/publication';
 import Registration from './protocol/registration';
 import Result from './protocol/result';
@@ -24,8 +24,10 @@ export const OptionsDefaults = {
 export default class Client {
     protected _connection: Connection;
 
-    public onJoin: (details: KwArgs) => void = () => {};
-    public onLeave: (reason: string, details: KwArgs) => void = () => {};
+    public onJoin: (details: KwArgs) => void = () => {
+    };
+    public onLeave: (reason: string, details: KwArgs) => void = () => {
+    };
 
     constructor(url: string, realm: string, options?: Options) {
         options = Object.assign({}, OptionsDefaults, options ?? {});
@@ -56,11 +58,11 @@ export default class Client {
         return await this._connection.call(rpc, args, kwArgs, options);
     }
 
-    public async subscribe(topic: string, handler: TodoType, options?: KwArgs): Promise<Subscription> {
+    public async subscribe(topic: string, handler: SubscriptionHandler, options?: KwArgs): Promise<Subscription> {
         return await this._connection.subscribe(topic, handler, options);
     }
 
-    public async register(procedure: string, endpoint: TodoType, options?: KwArgs): Promise<Registration> {
+    public async register(procedure: string, endpoint: RegistrationCallback, options?: KwArgs): Promise<Registration> {
         return await this._connection.register(procedure, endpoint, options);
     }
 

@@ -30,7 +30,7 @@ import {
 import { asCancelablePromise, asPromise } from './util';
 import { ProtocolType } from './protocol';
 import { Transporter, TransportOptions, TransportOptionsDefaults } from './transport';
-import type { Args, KwArgs, TodoType } from './types';
+import type { Args, KwArgs, RegistrationCallback, SubscriptionHandler, TodoType } from './types';
 import Result from './protocol/result';
 import Session from './protocol/session';
 import WampError from './protocol/error';
@@ -681,7 +681,7 @@ export default class Connection {
         }
     }
 
-    public async subscribe(topic: string, handler: TodoType, options?: KwArgs): Promise<Subscription> {
+    public async subscribe(topic: string, handler: SubscriptionHandler, options?: KwArgs): Promise<Subscription> {
         options = options ?? {};
         await this.tryOpen();
         const session = await this.getSession();
@@ -693,7 +693,7 @@ export default class Connection {
         return await d.promise;
     }
 
-    public async register(procedure: string, endpoint: TodoType, options?: KwArgs): Promise<Registration> {
+    public async register(procedure: string, endpoint: RegistrationCallback, options?: KwArgs): Promise<Registration> {
         options = options ?? {};
         await this.tryOpen();
         const session = await this.getSession();
@@ -747,7 +747,7 @@ export default class Connection {
         return await d.promise;
     }
 
-    public async unregister(registration: TodoType): Promise<void> {
+    public async unregister(registration: Registration): Promise<void> {
         if (!registration.active || !this._registrations.has(registration.id)) {
             throw new Error('registration not active');
         }
