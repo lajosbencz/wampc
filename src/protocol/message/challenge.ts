@@ -1,5 +1,5 @@
 import Message, { MessageType } from '../message';
-import type { KwArgs, Nullable } from '../../types';
+import type { KwArgs, Optional } from '../../types';
 
 export default class ChallengeMessage extends Message {
     constructor(authmethod: string, extra?: KwArgs) {
@@ -10,7 +10,7 @@ export default class ChallengeMessage extends Message {
         return this._args[0];
     }
 
-    public get extra(): Nullable<KwArgs> {
+    public get extra(): Optional<KwArgs> {
         return this._args[1];
     }
 }

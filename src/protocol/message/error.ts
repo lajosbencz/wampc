@@ -1,5 +1,5 @@
 import Message, { MessageType } from '../message';
-import type { Args, KwArgs, Nullable } from '../../types';
+import type { Args, KwArgs, Optional } from '../../types';
 import { MessageAppendArgsKwArgs } from '../message';
 
 export default class ErrorMessage extends Message {
@@ -30,11 +30,11 @@ export default class ErrorMessage extends Message {
         return this._args[3];
     }
 
-    public get args(): Nullable<Args> {
+    public get args(): Optional<Args> {
         return this._args[3];
     }
 
-    public get kwArgs(): Nullable<KwArgs> {
+    public get kwArgs(): Optional<KwArgs> {
         return this._args[4];
     }
 

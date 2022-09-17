@@ -1,5 +1,5 @@
 import Message, { MessageType } from '../message';
-import type { KwArgs, Nullable } from '../../types';
+import type { KwArgs, Optional } from '../../types';
 
 export default class UnsubscribedMessage extends Message {
     constructor(requestId: number, details?: KwArgs) {
@@ -10,10 +10,10 @@ export default class UnsubscribedMessage extends Message {
         return this._args[0];
     }
 
-    public get details(): Nullable<KwArgs> {
+    public get details(): Optional<KwArgs> {
         if (this._args.length > 1) {
             return this._args[1];
         }
-        return null;
+        return undefined;
     }
 }

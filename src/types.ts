@@ -1,4 +1,4 @@
-export type Nullable<T> = T | undefined | null;
+export type Optional<T> = T | undefined;
 
 export type ArrayOrObject = Args | KwArgs;
 

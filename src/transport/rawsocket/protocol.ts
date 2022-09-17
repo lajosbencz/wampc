@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import { SerializerType } from '../../serializer';
-import type { Nullable } from '../../types';
+import type { Optional } from '../../types';
 import type { Socket } from 'net';
 
 export enum ProtocolStatus {
@@ -252,7 +252,7 @@ export class Protocol {
         this._status = ProtocolStatus.NEGOTIATING;
     }
 
-    protected splitBytes(data: any, len: number): Nullable<any[]> {
+    protected splitBytes(data: any, len: number): Optional<any[]> {
         // If the buffer we have already isn't the right size, throw the data away
         // and make a new one
         if (len !== this._buffer.length) {
@@ -265,7 +265,7 @@ export class Protocol {
         const dataLen: number = data.length;
         if (this._bufferLen + dataLen < len) {
             this._bufferLen += dataLen;
-            return null;
+            return undefined;
             // Otherwise, return the requested frame and the leftover data
         } else {
             const bytes = this._buffer.subarray();

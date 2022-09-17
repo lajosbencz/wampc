@@ -69,7 +69,7 @@ export interface ConnectionOptions {
     protocols?: ProtocolType[];
     authid?: string;
     authmethods?: string[];
-    onchallenge?: (c: Connection, authmethod: string, extra?: KwArgs) => any|Promise<any>;
+    onchallenge?: (c: Connection, authmethod: string, extra?: KwArgs) => any | Promise<any>;
     caller_disclose_me?: boolean;
     publisher_disclose_me?: boolean;
 }
