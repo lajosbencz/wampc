@@ -5,4 +5,6 @@
 dist/
 bundle/
 coverage/
+example/crossbar/.crossbar/key.*
+example/crossbar/.crossbar/node.pid
 node_modules/

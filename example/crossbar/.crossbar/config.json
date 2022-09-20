@@ -1,0 +1,83 @@
+{
+  "version": 2,
+  "workers": [
+    {
+      "type": "router",
+      "options": {
+      },
+      "realms": [
+        {
+          "name": "default",
+          "roles": [
+            {
+              "name": "backend",
+              "permissions": [
+                {
+                  "uri": "*",
+                  "allow": {
+                    "register": true,
+                    "call": true,
+                    "subscribe": true,
+                    "publish": true
+                  },
+                  "disclose": {
+                    "caller": true,
+                    "publisher": true
+                  },
+                  "cache": true
+                },
+                {
+                  "uri": "*",
+                  "allow": {
+                    "register": false,
+                    "call": true,
+                    "subscribe": true,
+                    "publish": false
+                  },
+                  "disclose": {
+                    "caller": false,
+                    "publisher": false
+                  },
+                  "cache": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "transports": [
+        {
+          "type": "web",
+          "endpoint": {
+            "type": "tcp",
+            "port": 8080
+          },
+          "paths": {
+            "/": {
+              "type": "static",
+              "directory": "../web"
+            },
+            "shared": {
+              "type": "static",
+              "directory": "../../_shared-web-resources"
+            },
+            "ws": {
+              "type": "websocket",
+              "auth": {
+                "anonymous": {
+                  "type": "static",
+                  "role": "anonymous"
+                },
+                "ticket": {
+                  "type": "dynamic",
+                  "authenticator": "com.example.authenticate",
+                  "authenticator-realm": "default"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
